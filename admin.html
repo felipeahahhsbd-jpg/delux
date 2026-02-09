@@ -213,9 +213,6 @@
         const db = getFirestore(app);
 
         const ADMIN_EMAIL = "lipedosantos2008@gmail.com";
-        
-        // --- COLOQUE ABAIXO SUA URL DO PIPEDREAM ---
-        // Exemplo: https://eo123456.m.pipedream.net
         const URL_PIPEDREAM_PAYOUT = "https://eottot41sx25yyz.m.pipedream.net"; 
         
         let userEncontradoId = null;
@@ -225,29 +222,23 @@
             toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, background: '#1a1a1a', color: '#fff'
         });
 
-        // --- LÓGICA DE SEGURANÇA REFORÇADA ---
         onAuthStateChanged(auth, async (user) => {
             const loading = document.getElementById('loading');
             const adminPanel = document.getElementById('admin-panel');
             const deniedDiv = document.getElementById('access-denied');
 
             if (user) {
-                // Verifica se é o admin exato (ignorando maiúsculas/minúsculas)
                 if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
-                    // É admin: Mostra o painel e carrega os dados
                     loading.style.display = 'none';
                     deniedDiv.style.display = 'none';
                     adminPanel.style.display = 'block'; 
-                    
                     carregarDadosIniciais();
                 } else {
-                    // NÃO é admin: DESTRÓI o painel do HTML para segurança total
                     loading.style.display = 'none';
-                    if(adminPanel) adminPanel.remove(); // Remove fisicamente da página
+                    if(adminPanel) adminPanel.remove();
                     deniedDiv.style.display = 'block';
                 }
             } else {
-                // Não logado
                 window.location.href = "login.html";
             }
         });
@@ -414,14 +405,10 @@
                         btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i>";
 
                         try {
-                            console.log("Iniciando requisição para:", URL_PIPEDREAM_PAYOUT);
-                            
+                            // TENTATIVA AUTOMÁTICA
                             const response = await fetch(URL_PIPEDREAM_PAYOUT, {
                                 method: 'POST',
-                                headers: { 
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json' 
-                                },
+                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                                 body: JSON.stringify({
                                     amount: parseFloat(s.valorReceber),
                                     pixKey: s.chavePix,
@@ -431,34 +418,37 @@
                             });
 
                             if (response.ok) {
-                                await updateDoc(doc(db, "saques", id), { status: "concluido", dataPagamento: new Date() });
-                                Swal.fire('Sucesso!', 'Enviado ao Pipedream e Baixa Efetuada.', 'success');
+                                await updateDoc(doc(db, "saques", id), { status: "concluido", dataPagamento: new Date(), metodo: "AUTOMATICO" });
+                                Swal.fire('Sucesso!', 'Enviado ao Pipedream.', 'success');
                                 carregarDadosIniciais();
                             } else {
-                                // Se o Pipedream responder com erro 400 ou 500
                                 const text = await response.text();
                                 throw new Error(`Status ${response.status}: ${text}`);
                             }
                         } catch (error) {
-                            console.error("DETALHES DO ERRO:", error);
+                            console.error("ERRO PIPEDREAM:", error);
                             
-                            let msgErro = "Falha ao conectar com o Pipedream.";
-                            
-                            if (error.message.includes("Failed to fetch")) {
-                                msgErro = "Erro de CORS ou Conexão. Verifique se o workflow do Pipedream está ATIVO e se retorna HTTP Response.";
-                            } else {
-                                msgErro = error.message;
-                            }
-
-                            Swal.fire({
+                            // --- LÓGICA DE CONTINGÊNCIA (BAIXA MANUAL) ---
+                            const confirmManual = await Swal.fire({
                                 icon: 'error',
-                                title: 'Erro no Pagamento',
-                                text: msgErro,
-                                footer: 'Abra o Console (F12) para ver detalhes técnicos.'
+                                title: 'Falha na Automação',
+                                text: `O Pipedream falhou (Erro ${error.message}). Deseja dar baixa MANUALMENTE no painel e fazer o PIX pelo seu banco?`,
+                                showCancelButton: true,
+                                confirmButtonText: 'Sim, Baixar Manualmente',
+                                cancelButtonText: 'Não, cancelar',
+                                confirmButtonColor: '#e74c3c',
+                                background: '#1a1a1a',
+                                color: '#fff'
                             });
-                            
-                            btn.disabled = false;
-                            btn.innerHTML = textoOriginal;
+
+                            if (confirmManual.isConfirmed) {
+                                await updateDoc(doc(db, "saques", id), { status: "concluido", dataPagamento: new Date(), metodo: "MANUAL_ERRO_API" });
+                                Swal.fire('Baixa Efetuada!', 'O saque foi marcado como pago no sistema. Faça o PIX manualmente.', 'success');
+                                carregarDadosIniciais();
+                            } else {
+                                btn.disabled = false;
+                                btn.innerHTML = textoOriginal;
+                            }
                         }
                     };
                 });
