@@ -143,204 +143,190 @@
         <a href="perfil.html" class="nav-item"><i class="fas fa-user-alt"></i>Perfil</a>
     </nav>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, Timestamp, increment, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, Timestamp, increment, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
-            authDomain: "monety-site-9175f.firebaseapp.com",
-            projectId: "monety-site-9175f",
-            storageBucket: "monety-site-9175f.firebasestorage.app",
-            messagingSenderId: "840821848803",
-            appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
+        authDomain: "monety-site-9175f.firebaseapp.com",
+        projectId: "monety-site-9175f",
+        storageBucket: "monety-site-9175f.firebasestorage.app",
+        messagingSenderId: "840821848803",
+        appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        let saldoAtual = 0;
-        let uidUsuario = null;
+    let saldoAtual = 0;
+    let uidUsuario = null;
 
-        const listaPlanos = [
-            { nome: 'MINI', valor: 30, dias: 60, diario: 6, total: 360, ativo: true },
-            { nome: 'BRONZE', valor: 50, dias: 30, diario: 10, total: 300, ativo: true },
-            { nome: 'START', valor: 100, dias: 30, diario: 20, total: 600, ativo: true },
-            { nome: 'PRATA', valor: 200, dias: 30, diario: 40, total: 1200, ativo: true },
-            { nome: 'SPEED', valor: 350, dias: 30, diario: 70, total: 2100, ativo: true },
-            { nome: 'OURO', valor: 450, dias: 30, diario: 90, total: 2700, ativo: true },
-            { nome: 'ADVANCED', valor: 500, dias: 30, diario: 100, total: 3000, ativo: true },
-            { nome: 'VITALITY', valor: 700, dias: 30, diario: 140, total: 4200, ativo: true },
-            { nome: 'PREMIUM', valor: 1000, dias: 30, diario: 200, total: 6000, ativo: true },
-            { nome: 'VIP', valor: 2000, dias: 30, diario: 400, total: 12000, ativo: true },
-            { nome: 'ELITE', valor: 3000, dias: 30, diario: 0, total: 0, ativo: false },
-            { nome: 'ULTIMATE', valor: 5000, dias: 30, diario: 0, total: 0, ativo: false }
-        ];
+    const listaPlanos = [
+        { nome: 'MINI', valor: 30, dias: 60, diario: 6, total: 360, ativo: true },
+        { nome: 'BRONZE', valor: 50, dias: 30, diario: 10, total: 300, ativo: true },
+        { nome: 'START', valor: 100, dias: 30, diario: 20, total: 600, ativo: true },
+        { nome: 'PRATA', valor: 200, dias: 30, diario: 40, total: 1200, ativo: true },
+        { nome: 'SPEED', valor: 350, dias: 30, diario: 70, total: 2100, ativo: true },
+        { nome: 'OURO', valor: 450, dias: 30, diario: 90, total: 2700, ativo: true },
+        { nome: 'ADVANCED', valor: 500, dias: 30, diario: 100, total: 3000, ativo: true },
+        { nome: 'VITALITY', valor: 700, dias: 30, diario: 140, total: 4200, ativo: true },
+        { nome: 'PREMIUM', valor: 1000, dias: 30, diario: 200, total: 6000, ativo: true },
+        { nome: 'VIP', valor: 2000, dias: 30, diario: 400, total: 12000, ativo: true },
+        { nome: 'ELITE', valor: 3000, dias: 30, diario: 0, total: 0, ativo: false },
+        { nome: 'ULTIMATE', valor: 5000, dias: 30, diario: 0, total: 0, ativo: false }
+    ];
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                uidUsuario = user.uid;
-                await carregarDados();
-                await verificarRendimentos(); // Verifica se tem lucro pra pagar hoje
-                gerarPlanos();
-            } else { window.location.href = "login.html"; }
-        });
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            uidUsuario = user.uid;
+            await carregarDados();
+            await verificarRendimentos();
+            gerarPlanos();
+        } else { window.location.href = "login.html"; }
+    });
 
-        async function carregarDados() {
-            try {
-                const snap = await getDoc(doc(db, "usuarios", uidUsuario));
-                if (snap.exists()) {
-                    saldoAtual = Number(snap.data().saldo) || 0;
-                    document.getElementById('user-balance').innerText = `R$ ${saldoAtual.toFixed(2).replace('.', ',')}`;
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        // --- FUNÇÃO NOVA: PAGA O RENDIMENTO DIÁRIO ---
-        async function verificarRendimentos() {
-            try {
-                const q = query(collection(db, "investimentos"), 
-                    where("userId", "==", uidUsuario),
-                    where("status", "==", "ativo")
-                );
-                
-                const snapshot = await getDocs(q);
-                const agora = new Date();
-
-                snapshot.forEach(async (docInv) => {
-                    const dadosInv = docInv.data();
-                    const ultimoPag = dadosInv.ultimoPagamento.toDate();
-                    const dataExp = dadosInv.dataExpiracao.toDate();
-
-                    // Se já passou da data de expiração, finaliza o plano
-                    if (agora > dataExp) {
-                        await updateDoc(doc(db, "investimentos", docInv.id), { status: "finalizado" });
-                        return;
-                    }
-
-                    // Calcula diferença de tempo em milissegundos
-                    const diffTime = Math.abs(agora - ultimoPag);
-                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Converte para dias inteiros
-
-                    // Se passou pelo menos 1 dia (24h)
-                    if (diffDays >= 1) {
-                        const valorPagar = dadosInv.rendimentoDiario * diffDays;
-
-                        // 1. Atualiza o saldo do usuário (Saldo Lucro e Saldo Total se quiser, aqui vai no saldo geral)
-                        // NOTA: Geralmente separa-se saldo de depósito e saldo de lucro. Aqui estou somando no saldo geral.
-                        await updateDoc(doc(db, "usuarios", uidUsuario), {
-                            saldoLucro: increment(valorPagar) // Supondo que você use 'saldoLucro' para saques
-                        });
-
-                        // 2. Atualiza o investimento (novo último pagamento)
-                        await updateDoc(doc(db, "investimentos", docInv.id), {
-                            ultimoPagamento: Timestamp.now()
-                        });
-
-                        // 3. Registra no histórico
-                        await addDoc(collection(db, "historico"), {
-                            userId: uidUsuario,
-                            valor: valorPagar,
-                            tipo: "Rendimento",
-                            descricao: `Rendimento ${diffDays} dia(s) - Plano ${dadosInv.plano}`,
-                            data: Timestamp.now()
-                        });
-                        
-                        // Opcional: Mostra um toast ou notificação discreta
-                        console.log(`Pago: R$ ${valorPagar} referente a ${diffDays} dias.`);
-                    }
-                });
-            } catch (error) {
-                console.error("Erro ao verificar rendimentos:", error);
+    async function carregarDados() {
+        try {
+            const snap = await getDoc(doc(db, "usuarios", uidUsuario));
+            if (snap.exists()) {
+                const dados = snap.data();
+                // Verifica 'saldo' ou 'balance' caso você tenha mudado o nome no banco
+                saldoAtual = Number(dados.saldo || dados.balance) || 0;
+                document.getElementById('user-balance').innerText = `R$ ${saldoAtual.toFixed(2).replace('.', ',')}`;
             }
-        }
+        } catch (e) { console.error("Erro ao carregar saldo:", e); }
+    }
 
-        function gerarPlanos() {
-            const container = document.getElementById('container-planos');
-            container.innerHTML = listaPlanos.map(p => {
-                return `
-                <div class="plan-card">
-                    <div class="duration-tag">Ciclo: ${p.dias} Dias</div>
-                    <h3>PLANO ${p.nome}</h3>
-                    <p class="min-invest">Investimento</p>
-                    <div class="price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
-                    
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span>Diário</span>
-                            <strong>R$ ${p.diario.toFixed(2).replace('.', ',')}</strong>
-                        </div>
-                        <div class="info-item">
-                            <span>Duração</span>
-                            <strong style="color:var(--gold)">${p.dias} dias</strong>
-                        </div>
-                    </div>
+    async function verificarRendimentos() {
+        try {
+            const q = query(collection(db, "investimentos"), 
+                where("userId", "==", uidUsuario),
+                where("status", "==", "ativo")
+            );
+            
+            const snapshot = await getDocs(q);
+            const agora = new Date();
 
-                    <div class="total-box">
-                        <span>Retorno Total</span>
-                        <strong>R$ ${p.total.toFixed(2).replace('.', ',')}</strong>
-                    </div>
+            for (const docInv of snapshot.docs) {
+                const dadosInv = docInv.data();
+                if (!dadosInv.ultimoPagamento) continue;
 
-                    <button class="${p.ativo ? 'btn-buy' : 'btn-buy btn-disabled'}" 
-                        ${p.ativo ? `onclick="comprarPlano('${p.nome}', ${p.valor}, ${p.diario}, ${p.dias})"` : ""}>
-                        ${p.ativo ? 'Ativar Agora' : 'Em Breve'}
-                    </button>
-                </div>`;
-            }).join('');
-        }
+                const ultimoPag = dadosInv.ultimoPagamento.toDate();
+                const dataExp = dadosInv.dataExpiracao.toDate();
 
-        async function processarComissoesRede(valorPlano) {
-            try {
-                const userRef = doc(db, "usuarios", uidUsuario);
-                const compradorSnap = await getDoc(userRef);
-                const dados = compradorSnap.data();
-
-                if (dados.jaGerouBonus === true) return;
-
-                const rede = [
-                    { id: dados.indicadoPor, pct: 0.10 },      
-                    { id: dados.indicadoPorAvo, pct: 0.05 },  
-                    { id: dados.indicadoPorBisavo, pct: 0.02 } 
-                ];
-
-                for (let i = 0; i < rede.length; i++) {
-                    if (rede[i].id) {
-                        let porcentagem = rede[i].pct;
-                        
-                        if (i === 0) { 
-                            const paiSnap = await getDoc(doc(db, "usuarios", rede[i].id));
-                            if (paiSnap.exists()) {
-                                const count = paiSnap.data().indicadosCount || 0;
-                                if (count >= 50) porcentagem = 0.20;
-                                else if (count >= 10) porcentagem = 0.15;
-                            }
-                        }
-
-                        const bonus = valorPlano * porcentagem;
-
-                        await updateDoc(doc(db, "usuarios", rede[i].id), {
-                            saldoLucro: increment(bonus),
-                            totalComissoes: increment(bonus)
-                        });
-
-                        await addDoc(collection(db, "historico"), {
-                            userId: rede[i].id,
-                            valor: bonus,
-                            tipo: "Indicação",
-                            descricao: `Comissão Nível ${i+1} - Compra de ${dados.nome}`,
-                            data: Timestamp.now()
-                        });
-                    }
+                if (agora > dataExp) {
+                    await updateDoc(doc(db, "investimentos", docInv.id), { status: "finalizado" });
+                    continue;
                 }
 
-                await updateDoc(userRef, { jaGerouBonus: true });
+                const diffTime = Math.abs(agora - ultimoPag);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-            } catch (e) { console.error("Erro na rede:", e); }
-        }
+                if (diffDays >= 1) {
+                    const valorPagar = dadosInv.rendimentoDiario * diffDays;
+                    await updateDoc(doc(db, "usuarios", uidUsuario), {
+                        saldoLucro: increment(valorPagar),
+                        totalEarned: increment(valorPagar)
+                    });
 
-        window.comprarPlano = async (nome, valor, diario, dias) => {
+                    await updateDoc(doc(db, "investimentos", docInv.id), {
+                        ultimoPagamento: Timestamp.now()
+                    });
+
+                    await addDoc(collection(db, "historico"), {
+                        userId: uidUsuario,
+                        valor: valorPagar,
+                        tipo: "Rendimento",
+                        descricao: `Rendimento ${diffDays} dia(s) - Plano ${dadosInv.plano}`,
+                        data: Timestamp.now()
+                    });
+                }
+            }
+        } catch (error) { console.error("Erro nos rendimentos:", error); }
+    }
+
+    function gerarPlanos() {
+        const container = document.getElementById('container-planos');
+        container.innerHTML = listaPlanos.map(p => `
+            <div class="plan-card">
+                <div class="duration-tag">Ciclo: ${p.dias} Dias</div>
+                <h3>PLANO ${p.nome}</h3>
+                <p class="min-invest">Investimento</p>
+                <div class="price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span>Diário</span>
+                        <strong>R$ ${p.diario.toFixed(2).replace('.', ',')}</strong>
+                    </div>
+                    <div class="info-item">
+                        <span>Duração</span>
+                        <strong style="color:var(--gold)">${p.dias} dias</strong>
+                    </div>
+                </div>
+                <div class="total-box">
+                    <span>Retorno Total</span>
+                    <strong>R$ ${p.total.toFixed(2).replace('.', ',')}</strong>
+                </div>
+                <button class="${p.ativo ? 'btn-buy' : 'btn-buy btn-disabled'}" 
+                    onclick="${p.ativo ? `comprarPlano('${p.nome}', ${p.valor}, ${p.diario}, ${p.dias})` : ''}">
+                    ${p.ativo ? 'Ativar Agora' : 'Em Breve'}
+                </button>
+            </div>`).join('');
+    }
+
+    async function processarComissoesRede(valorPlano) {
+        try {
+            const compradorSnap = await getDoc(doc(db, "usuarios", uidUsuario));
+            if (!compradorSnap.exists()) return;
+            
+            const dados = compradorSnap.data();
+            if (dados.jaGerouBonus === true) return;
+
+            const rede = [
+                { id: dados.indicadoPor, pct: 0.10 },      
+                { id: dados.indicadoPorAvo, pct: 0.05 },  
+                { id: dados.indicadoPorBisavo, pct: 0.02 } 
+            ];
+
+            for (let i = 0; i < rede.length; i++) {
+                const indicanteId = rede[i].id;
+                // CORREÇÃO: Verifica se o ID existe e não é vazio antes de criar o doc()
+                if (indicanteId && indicanteId.trim() !== "") {
+                    let porcentagem = rede[i].pct;
+                    
+                    if (i === 0) { 
+                        const paiSnap = await getDoc(doc(db, "usuarios", indicanteId));
+                        if (paiSnap.exists()) {
+                            const count = paiSnap.data().indicadosCount || 0;
+                            if (count >= 50) porcentagem = 0.20;
+                            else if (count >= 10) porcentagem = 0.15;
+                        }
+                    }
+
+                    const bonus = valorPlano * porcentagem;
+                    await updateDoc(doc(db, "usuarios", indicanteId), {
+                        saldoLucro: increment(bonus),
+                        totalComissoes: increment(bonus)
+                    });
+
+                    await addDoc(collection(db, "historico"), {
+                        userId: indicanteId,
+                        valor: bonus,
+                        tipo: "Indicação",
+                        descricao: `Comissão Nível ${i+1} - Referente a ${dados.nome || 'Novo Membro'}`,
+                        data: Timestamp.now()
+                    });
+                }
+            }
+            await updateDoc(doc(db, "usuarios", uidUsuario), { jaGerouBonus: true });
+        } catch (e) { console.error("Erro no processamento de rede:", e); }
+    }
+
+    window.comprarPlano = async (nome, valor, diario, dias) => {
+        try {
             await carregarDados();
 
             if (saldoAtual < valor) {
@@ -348,8 +334,7 @@
                     icon: 'error', 
                     title: 'Saldo insuficiente', 
                     text: 'Você precisa de saldo de depósito para ativar planos.',
-                    background: '#1a0505', 
-                    color: '#fff' 
+                    background: '#1a0505', color: '#fff' 
                 });
             }
 
@@ -362,76 +347,78 @@
                 cancelButtonColor: '#e74c3c',
                 confirmButtonText: 'Sim, Ativar!',
                 cancelButtonText: 'Cancelar',
-                background: '#1a0505', 
-                color: '#fff'
+                background: '#1a0505', color: '#fff'
             });
 
             if (confirm.isConfirmed) {
                 Swal.fire({ 
-                    title: 'Ativando plano...', 
+                    title: 'Processando...', 
                     allowOutsideClick: false, 
                     didOpen: () => Swal.showLoading(), 
-                    background: '#1a0505', 
-                    color: '#fff' 
+                    background: '#1a0505', color: '#fff' 
                 });
 
+                const dataExp = new Date();
+                dataExp.setDate(dataExp.getDate() + dias);
+
+                // 1. REGISTRA O INVESTIMENTO
+                await addDoc(collection(db, "investimentos"), {
+                    userId: uidUsuario,
+                    plano: nome,
+                    valor: valor,
+                    rendimentoDiario: diario,
+                    status: "ativo",
+                    timestamp: Timestamp.now(),
+                    dataExpiracao: Timestamp.fromDate(dataExp),
+                    ultimoPagamento: Timestamp.now()
+                });
+
+                // 2. DESCONTA O SALDO (Tenta os dois nomes de campo comuns)
+                const userRef = doc(db, "usuarios", uidUsuario);
+                const userSnap = await getDoc(userRef);
+                const campoSaldo = userSnap.data().balance !== undefined ? "balance" : "saldo";
+
+                await updateDoc(userRef, { 
+                    [campoSaldo]: increment(-valor) 
+                });
+
+                // 3. HISTÓRICO
+                await addDoc(collection(db, "historico"), {
+                    userId: uidUsuario,
+                    valor: -valor, 
+                    tipo: "Plano Ativado", 
+                    descricao: `Ativação do Plano ${nome}`,
+                    data: Timestamp.now()
+                });
+
+                // 4. BÔNUS DE REDE (Dentro de um try/catch isolado para não travar a compra)
                 try {
-                    const dataExp = new Date();
-                    dataExp.setDate(dataExp.getDate() + dias);
-
-                    // 1. REGISTRA O INVESTIMENTO ATIVO
-                    await addDoc(collection(db, "investimentos"), {
-                        userId: uidUsuario,
-                        plano: nome,
-                        valor: valor,
-                        rendimentoDiario: diario,
-                        status: "ativo",
-                        timestamp: Timestamp.now(),
-                        dataExpiracao: Timestamp.fromDate(dataExp),
-                        ultimoPagamento: Timestamp.now()
-                    });
-
-                    // 2. DESCONTA O VALOR DO SALDO
-                    await updateDoc(doc(db, "usuarios", uidUsuario), { 
-                        saldo: increment(-valor) 
-                    });
-
-                    // 3. SALVA NO HISTÓRICO
-                    await addDoc(collection(db, "historico"), {
-                        userId: uidUsuario,
-                        valor: -valor, 
-                        tipo: "Plano Ativado", 
-                        descricao: `Ativação do Plano ${nome}`,
-                        data: Timestamp.now()
-                    });
-
-                    // 4. CHAMA O BÔNUS DE REDE
                     await processarComissoesRede(valor);
-
-                    Swal.fire({ 
-                        icon: 'success', 
-                        title: 'Plano Ativado!', 
-                        text: 'Seu rendimento começará em 24h.', 
-                        timer: 2000, 
-                        showConfirmButton: false, 
-                        background: '#1a0505', 
-                        color: '#fff' 
-                    });
-
-                    setTimeout(() => window.location.href = "home.html", 2000);
-
-                } catch (e) {
-                    console.error(e);
-                    Swal.fire({ 
-                        icon: 'error', 
-                        title: 'Erro!', 
-                        text: 'Erro ao processar ativação.', 
-                        background: '#1a0505', 
-                        color: '#fff' 
-                    });
+                } catch (errRede) {
+                    console.error("Erro ao pagar comissões, mas o plano foi ativado:", errRede);
                 }
+
+                await Swal.fire({ 
+                    icon: 'success', 
+                    title: 'Plano Ativado!', 
+                    text: 'Seu rendimento começará em 24h.', 
+                    timer: 2000, 
+                    showConfirmButton: false, 
+                    background: '#1a0505', color: '#fff' 
+                });
+
+                window.location.href = "home.html";
             }
-        };
-    </script>
+        } catch (e) {
+            console.error("ERRO DETALHADO NA ATIVAÇÃO:", e);
+            Swal.fire({ 
+                icon: 'error', 
+                title: 'Falha na Ativação', 
+                text: 'Houve um erro técnico. Verifique seu saldo e tente novamente.', 
+                background: '#1a0505', color: '#fff' 
+            });
+        }
+    };
+</script>
 </body>
 </html>
