@@ -3,181 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil -Nexusy</title>
+    <title>Meu Perfil - Nexus Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
     <style>
+        /* DESIGN SYSTEM PREMIUM */
         :root {
-            --bg: linear-gradient(180deg, #1a0505 0%, #000000 100%);
-            --card: rgba(255, 255, 255, 0.05);
-            --red: #e74c3c;
-            --gold: #FFD700;
-            --telegram: #0088cc; /* Cor Azul Telegram */
+            --bg-main: #0b0f1a;
+            --bg-card: #121826;
+            --primary: #4f8cff;
+            --secondary: #7cf3ff;
+            --accent: #9b8cff;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --text: #ffffff;
+            --text-soft: #9aa4b2;
+            --radius: 18px;
         }
 
-        /* REMOVENDO O CONTORNO AZUL DE SELEÇÃO E FOCO */
         * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+            margin: 0; padding: 0; box-sizing: border-box; 
             font-family: 'Inter', sans-serif; 
             outline: none !important; 
             -webkit-tap-highlight-color: transparent; 
         }
 
-        body { background: var(--bg); color: white; padding: 20px; padding-bottom: 110px; min-height: 100vh; }
+        body { 
+            background: linear-gradient(180deg, var(--bg-main) 0%, #05070f 100%); 
+            color: var(--text); 
+            min-height: 100vh; 
+            padding-bottom: 110px;
+            overflow-x: hidden;
+        }
 
-        .profile-header { text-align: center; margin: 30px 0; }
+        /* ANIMAÇÕES */
+        .fade-in { animation: fadeIn 0.8s ease-in-out; }
+        .slide-up { animation: slideUp 0.6s ease-out; }
+        .hover-scale { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-scale:hover { transform: translateY(-3px); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* TOPO DO PERFIL (HERO AREA) */
+        .profile-header {
+            padding: 50px 20px 30px;
+            text-align: center;
+            background: rgba(18, 24, 38, 0.4);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+        }
+
         .avatar-circle { 
-            width: 80px; height: 80px; background: var(--red); 
-            border-radius: 50%; margin: 0 auto 15px; 
+            width: 100%; height: 100%; 
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%; 
             display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; border: 3px solid var(--gold);
+            font-size: 2.5rem; color: white;
+            border: 4px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 25px rgba(79, 140, 255, 0.3);
         }
-        .user-info h2 { font-size: 1.5rem; margin-bottom: 5px; text-transform: capitalize; }
-        .user-info p { color: #888; font-size: 0.9rem; }
 
-        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
-        .stat-box { 
-            background: var(--card); padding: 20px; border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.1); text-align: center;
+        .edit-badge {
+            position: absolute; bottom: 0; right: 0;
+            background: var(--secondary); color: var(--bg-main);
+            width: 30px; height: 30px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; border: 3px solid var(--bg-main);
         }
-        .stat-box small { color: #aaa; font-size: 0.75rem; text-transform: uppercase; }
-        .stat-box span { display: block; font-size: 1.1rem; font-weight: bold; margin-top: 5px; color: var(--gold); }
 
-        .menu-list { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .user-info h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; text-transform: capitalize; letter-spacing: -0.5px; }
+        .user-info p { color: var(--text-soft); font-size: 0.85rem; font-weight: 500; }
+
+        /* VIP PROGRESS BAR */
+        .vip-progress-container { margin: 0 20px 25px; padding: 20px; background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.03); }
+        .vip-labels { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.7rem; font-weight: 700; color: var(--text-soft); }
+        .vip-labels .active { color: var(--secondary); }
+        .progress-track { height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { width: 45%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); box-shadow: 0 0 10px var(--primary); }
+
+        /* CARDS DE INFORMAÇÕES */
+        .section-label { padding: 0 25px 10px; font-size: 0.75rem; color: var(--text-soft); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 20px 25px; }
+        .info-card { 
+            background: var(--bg-card); padding: 18px; border-radius: var(--radius); 
+            border: 1px solid rgba(255,255,255,0.02);
+            text-align: left;
+        }
+        .info-card small { display: block; color: var(--text-soft); font-size: 0.65rem; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+        .info-card span { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+        .info-card i { color: var(--primary); margin-bottom: 10px; font-size: 1.2rem; }
+
+        /* MENU LIST */
+        .menu-list { margin: 0 20px 25px; background: var(--bg-card); border-radius: var(--radius); overflow: hidden; border: 1px solid rgba(255,255,255,0.02); }
         .menu-item { 
             display: flex; align-items: center; justify-content: space-between; 
-            padding: 18px 20px; color: white; text-decoration: none;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 18px 20px; color: var(--text); text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
             transition: 0.2s;
         }
-        .menu-item:active { background: rgba(255,255,255,0.05); }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:active { background: rgba(255,255,255,0.03); }
+        .menu-item .left-part { display: flex; align-items: center; gap: 15px; font-size: 0.9rem; font-weight: 500; }
+        .menu-item i.icon-main { width: 20px; text-align: center; color: var(--primary); font-size: 1.1rem; }
+        .menu-item i.chevron { font-size: 0.8rem; color: var(--text-soft); }
         
-        /* Ícone padrão vermelho */
-        .menu-item i:first-child { margin-right: 15px; width: 20px; text-align: center; color: var(--red); }
-        
-        /* Ícones azuis para Telegram/Suporte */
-        .menu-item.tg-style i:first-child { color: var(--telegram); }
+        /* Telegram Colors */
+        .menu-item.tg-style i.icon-main { color: #0088cc; }
 
-        .btn-float-tg {
-            position: fixed; bottom: 90px; right: 20px;
-            width: 55px; height: 55px; background-color: var(--telegram);
-            color: #FFF; border-radius: 50px; display: flex;
-            align-items: center; justify-content: center;
-            font-size: 28px; box-shadow: 0px 5px 15px rgba(0,0,0,0.4);
-            z-index: 999; text-decoration: none;
+        /* BOTÃO LOGOUT */
+        .btn-logout-container { padding: 0 20px; margin-bottom: 30px; }
+        .btn-logout { 
+            width: 100%; padding: 16px; border-radius: 14px; 
+            border: none; background: rgba(239, 68, 68, 0.1); 
+            color: var(--danger); font-weight: 700; cursor: pointer; 
+            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 0.95rem;
         }
+        .btn-logout:hover { background: var(--danger); color: white; }
 
-        /* NAV BOTTOM COM EFEITO VIDRO VERMELHO NO ATIVO */
+        /* NAV BOTTOM (ESTILO APP NATIVO) */
         .nav-bottom { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: rgba(0, 0, 0, 0.9); 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 12px 0; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            backdrop-filter: blur(10px);
-            z-index: 10000;
-            height: 75px;
-            align-items: center;
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: rgba(18, 24, 38, 0.85); 
+            display: flex; justify-content: space-around; 
+            padding: 15px 10px 25px; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
         }
         .nav-item { 
-            color: #555; 
-            text-align: center; 
-            text-decoration: none; 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 5px;
-            padding: 8px 0;
-            border-radius: 15px;
-            transition: 0.3s;
-            margin: 0 5px;
+            color: var(--text-soft); text-align: center; text-decoration: none; 
+            font-size: 0.7rem; font-weight: 500; padding: 5px;
+            transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 6px;
         }
-        .nav-item i { font-size: 1.3rem; }
-        .nav-item span { font-size: 0.65rem; }
+        .nav-item i { font-size: 1.4rem; }
+        .nav-item.active { color: var(--text); }
+        .nav-item.active i { 
+            color: var(--primary); 
+            filter: drop-shadow(0 0 8px rgba(79, 140, 255, 0.6));
+            transform: translateY(-2px);
+        }
 
-        /* ITEM ATIVO: EFEITO VIDRO VERMELHO */
-        .nav-item.active { 
-            color: #fff; 
-            background: rgba(231, 76, 60, 0.2); 
-            border: 1px solid rgba(231, 76, 60, 0.4);
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
-        }
-        .nav-item.active i { color: var(--red); }
+        /* CUSTOM SWEETALERT */
+        div.swal2-popup { background: var(--bg-card) !important; color: var(--text) !important; border-radius: 24px !important; }
+        .swal2-title, .swal2-html-container { color: var(--text) !important; }
+        .swal2-confirm { background-color: var(--danger) !important; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important; }
+        .swal2-cancel { background-color: rgba(255,255,255,0.05) !important; }
 
-        .btn-logout { 
-            margin-top: 30px; width: 100%; padding: 15px; border-radius: 15px; 
-            border: 1px solid rgba(231, 76, 60, 0.3); background: rgba(231, 76, 60, 0.05); 
-            color: var(--red); font-weight: bold; cursor: pointer; margin-bottom: 20px; 
-            transition: 0.3s;
-        }
     </style>
 </head>
 <body>
 
-    <a href="https://t.me/monety9220" target="_blank" class="btn-float-tg">
-        <i class="fab fa-telegram-plane"></i>
-    </a>
-
-    <div class="profile-header">
-        <div class="avatar-circle"><i class="fas fa-user"></i></div>
+    <div class="profile-header fade-in">
+        <div class="avatar-container">
+            <div class="avatar-circle"><i class="fas fa-user"></i></div>
+            <div class="edit-badge"><i class="fas fa-pen"></i></div>
+        </div>
         <div class="user-info">
-            <h2 id="display-nome">...</h2>
-            <p id="display-email">carregando dados...</p>
+            <h2 id="display-nome">Carregando...</h2>
+            <p id="display-email">Sincronizando dados...</p>
         </div>
     </div>
 
-    <div class="stats-container">
-        <div class="stat-box">
+    <div class="vip-progress-container slide-up">
+        <div class="vip-labels">
+            <span class="active">VIP 1</span>
+            <span>VIP 2</span>
+            <span>VIP 3</span>
+            <span>VIP 4</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill"></div>
+        </div>
+        <p style="font-size: 0.65rem; color: var(--text-soft); margin-top: 10px; text-align: center;">Faltam R$ 450,00 para o próximo nível</p>
+    </div>
+
+    <p class="section-label slide-up">Visão Geral</p>
+    <div class="info-grid slide-up">
+        <div class="info-card hover-scale">
+            <i class="fas fa-wallet"></i>
             <small>Saldo Disponível</small>
             <span id="stat-saldo">R$ 0,00</span>
         </div>
-        <div class="stat-box">
-            <small>Rede (Indicados)</small>
+        <div class="info-card hover-scale">
+            <i class="fas fa-users"></i>
+            <small>Amigos Indicados</small>
             <span id="stat-indicados">0</span>
         </div>
     </div>
 
-    <div class="menu-list">
-        <a href="deposito.html" class="menu-item">
-            <span><i class="fas fa-wallet"></i> Depositar Saldo</span>
-            <i class="fas fa-chevron-right"></i>
+    <p class="section-label slide-up">Configurações & Suporte</p>
+    <div class="menu-list slide-up">
+        <a href="historico.html" class="menu-item">
+            <div class="left-part"><i class="fas fa-history icon-main"></i> Histórico de Transações</div>
+            <i class="fas fa-chevron-right chevron"></i>
         </a>
-        <a href="saque.html" class="menu-item">
-            <span><i class="fas fa-hand-holding-usd"></i> Realizar Saque</span>
-            <i class="fas fa-chevron-right"></i>
+        <a href="seguranca.html" class="menu-item">
+            <div class="left-part"><i class="fas fa-shield-alt icon-main"></i> Segurança da Conta</div>
+            <i class="fas fa-chevron-right chevron"></i>
         </a>
-        <a href="transacoes.html" class="menu-item">
-            <span><i class="fas fa-history"></i> Histórico de Atividades</span>
-            <i class="fas fa-chevron-right"></i>
+        <a href="https://t.me/monety9220" target="_blank" class="menu-item tg-style">
+            <div class="left-part"><i class="fas fa-headset icon-main"></i> Suporte Especializado</div>
+            <i class="fas fa-external-link-alt chevron"></i>
         </a>
-        
-        <a href="https://t.me/monety9220" target="_blank" class="menu-item tg-style" style="color: var(--telegram);">
-            <span><i class="fas fa-headset"></i> Suporte Oficial</span>
-            <i class="fas fa-external-link-alt"></i>
-        </a>
-
-        <a href="https://t.me/+qasEE92ROa5iOTYx" target="_blank" class="menu-item tg-style" style="color: var(--telegram);">
-            <span><i class="fab fa-telegram"></i> Canal de Avisos VIP</span>
-            <i class="fas fa-external-link-alt"></i>
+        <a href="https://t.me/+qasEE92ROa5iOTYx" target="_blank" class="menu-item tg-style">
+            <div class="left-part"><i class="fab fa-telegram icon-main"></i> Canal de Avisos VIP</div>
+            <i class="fas fa-external-link-alt chevron"></i>
         </a>
     </div>
 
-    <button class="btn-logout" id="btnLogout">Sair com Segurança</button>
+    <div class="btn-logout-container slide-up">
+        <button class="btn-logout" id="btnLogout">
+            <i class="fas fa-power-off"></i> Sair com Segurança
+        </button>
+    </div>
 
     <nav class="nav-bottom">
         <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>Início</span></a>
         <a href="planos.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Planos</span></a>
-        <a href="indicacao.html" class="nav-item"><i class="fas fa-share-alt"></i><span>Indicar</span></a>
-        <a href="perfil.html" class="nav-item active"><i class="fas fa-user-alt"></i><span>Perfil</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="fas fa-share-nodes"></i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item active"><i class="fas fa-user"></i><span>Perfil</span></a>
     </nav>
 
     <script type="module">
@@ -187,11 +246,11 @@
 
         const firebaseConfig = {
             apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
-    authDomain: "monety-site-9175f.firebaseapp.com",
-    projectId: "monety-site-9175f",
-    storageBucket: "monety-site-9175f.firebasestorage.app",
-    messagingSenderId: "840821848803",
-    appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
+            authDomain: "monety-site-9175f.firebaseapp.com",
+            projectId: "monety-site-9175f",
+            storageBucket: "monety-site-9175f.firebasestorage.app",
+            messagingSenderId: "840821848803",
+            appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -220,15 +279,15 @@
 
         document.getElementById('btnLogout').addEventListener('click', async () => {
             const result = await Swal.fire({
-                title: 'Sair da conta?',
+                title: 'Encerrar Sessão?',
                 text: "Você precisará fazer login novamente para acessar seus lucros.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
+                confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#333',
-                confirmButtonText: 'Sim, sair',
+                confirmButtonText: 'Sim, sair agora',
                 cancelButtonText: 'Cancelar',
-                background: '#1a0505',
+                background: '#121826',
                 color: '#fff'
             });
 
