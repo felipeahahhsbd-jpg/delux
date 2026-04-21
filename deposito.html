@@ -15,7 +15,6 @@
             --gold: #FFD700;
         }
 
-        /* REMOÇÃO GLOBAL DE CONTORNOS E HIGHLIGHTS */
         * { 
             margin: 0; 
             padding: 0; 
@@ -69,7 +68,7 @@
             box-shadow: 0 0 15px rgba(46, 204, 113, 0.1);
         }
 
-        .custom-amount { margin-bottom: 25px; }
+        .custom-amount { margin-bottom: 20px; }
         .custom-amount label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #888; padding-left: 5px; }
         
         .input-wrapper { position: relative; }
@@ -80,6 +79,13 @@
             transform: translateY(-50%); 
             color: var(--green); 
             font-weight: bold; 
+        }
+        .input-wrapper i { 
+            position: absolute; 
+            left: 15px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--green); 
         }
 
         input { 
@@ -179,7 +185,7 @@
 
         <div class="info-card">
             <h3><i class="fas fa-shield-alt"></i> Pagamento Seguro</h3>
-            <p>O depósito mínimo é de <b>R$ 1,00</b>. O saldo cai na conta em instantes após o pagamento.</p>
+            <p>O depósito mínimo é de <b>R$ 1,00</b>. O saldo cai na conta em instantes após o pagamento via EvoPay.</p>
         </div>
 
         <div class="amount-grid">
@@ -196,6 +202,14 @@
             <div class="input-wrapper">
                 <span>R$</span>
                 <input type="number" id="deposito-valor" placeholder="50.00">
+            </div>
+        </div>
+
+        <div class="custom-amount">
+            <label>CPF do Pagador:</label>
+            <div class="input-wrapper">
+                <i class="fas fa-id-card"></i>
+                <input type="text" id="deposito-cpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)">
             </div>
         </div>
 
@@ -223,15 +237,15 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
-    authDomain: "monety-site-9175f.firebaseapp.com",
-    projectId: "monety-site-9175f",
-    storageBucket: "monety-site-9175f.firebasestorage.app",
-    messagingSenderId: "840821848803",
-    appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
+            authDomain: "monety-site-9175f.firebaseapp.com",
+            projectId: "monety-site-9175f",
+            storageBucket: "monety-site-9175f.firebasestorage.app",
+            messagingSenderId: "840821848803",
+            appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -241,18 +255,35 @@
         let pixGlobal = "";
         let uidUsuario = null;
         let emailUsuario = null;
-        let nomeUsuario = "Cliente ByteWay"; 
+        let nomeUsuario = "Cliente"; 
         let unsubscribeHistorico = null;
         
-        const urlPipedream = 'https://eottot41sx25yyz.m.pipedream.net';
+        // Novo Endpoint da Netlify
+        const urlNetlify = '/.netlify/functions/create-payment';
+
+        // Máscara Simples para CPF visual
+        window.maskCPF = function(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            input.value = v;
+        }
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 uidUsuario = user.uid;
                 emailUsuario = user.email;
-                const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+                // Alterado para buscar na coleção 'users', que é a mesma utilizada pelo seu webhook
+                const userDoc = await getDoc(doc(db, "users", user.uid));
                 if(userDoc.exists()) {
-                    nomeUsuario = userDoc.data().nome || "Cliente ByteWay";
+                    nomeUsuario = userDoc.data().nome || userDoc.data().name || "Cliente";
+                    // Se o usuário já tiver CPF salvo, autocompleta
+                    if(userDoc.data().cpf) {
+                        document.getElementById('deposito-cpf').value = userDoc.data().cpf;
+                        maskCPF(document.getElementById('deposito-cpf'));
+                    }
                 }
             } else {
                 window.location.href = "login.html";
@@ -265,36 +296,26 @@
             element.classList.add('active');
         }
 
-        function monitorarHistoricoDepot() {
-            const historicoRef = collection(db, "historico");
-            const q = query(
-                historicoRef,
-                where("userId", "==", uidUsuario),
-                where("tipo", "==", "Depósito"),
-                orderBy("data", "desc"),
-                limit(1)
-            );
+        // Monitoramento direcionado à transação específica criada pelo Netlify Function
+        function monitorarPagamento(transactionId, valorDepositado) {
+            const transacaoRef = doc(db, "users", uidUsuario, "transactions", transactionId);
 
-            const horaGeracaoPix = new Date();
-
-            unsubscribeHistorico = onSnapshot(q, (snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        const dados = change.doc.data();
-                        const dataFirestore = dados.data.toDate ? dados.data.toDate() : new Date(dados.data);
-
-                        if (dataFirestore >= horaGeracaoPix) {
-                            if (unsubscribeHistorico) unsubscribeHistorico();
-                            exibirSucessoFina(dados.valor);
-                        }
+            unsubscribeHistorico = onSnapshot(transacaoRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const dados = docSnap.data();
+                    // O seu webhook define o status como 'completed' (ou 'PAID' se configurado de outra forma)
+                    if (dados.status === 'completed' || dados.status === 'PAID') {
+                        if (unsubscribeHistorico) unsubscribeHistorico();
+                        exibirSucessoFina(valorDepositado);
                     }
-                });
+                }
             });
         }
 
         async function exibirSucessoFina(valor) {
-            const userDoc = await getDoc(doc(db, "usuarios", uidUsuario));
-            const saldoFinal = userDoc.exists() ? userDoc.data().saldo : 0;
+            // Busca o saldo atualizado na coleção 'users'
+            const userDoc = await getDoc(doc(db, "users", uidUsuario));
+            const saldoFinal = userDoc.exists() ? (userDoc.data().balance || userDoc.data().saldo || 0) : 0;
 
             Swal.fire({
                 title: 'DEPÓSITO CONFIRMADO!',
@@ -319,49 +340,54 @@
         }
 
         window.processarDeposito = async function() {
-    const valorInput = document.getElementById('deposito-valor');
-    const valor = parseFloat(valorInput.value);
-    const btn = document.getElementById('btn-gerar');
+            const valorInput = document.getElementById('deposito-valor');
+            const valor = parseFloat(valorInput.value);
+            const cpfInput = document.getElementById('deposito-cpf').value.replace(/\D/g, ""); // Extrai apenas números
+            const btn = document.getElementById('btn-gerar');
 
-    if (isNaN(valor) || valor < 1) {
-        return Swal.fire({ icon: 'error', title: 'Valor Inválido', text: 'Mínimo R$ 50,00', background: '#1a0505', color: '#fff' });
-    }
+            if (isNaN(valor) || valor < 1) {
+                return Swal.fire({ icon: 'error', title: 'Valor Inválido', text: 'O valor mínimo é R$ 1,00', background: '#1a0505', color: '#fff' });
+            }
 
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSANDO...';
+            if (cpfInput.length !== 11 && cpfInput.length !== 14) {
+                return Swal.fire({ icon: 'error', title: 'CPF Inválido', text: 'Informe um CPF válido para o pagamento.', background: '#1a0505', color: '#fff' });
+            }
 
-    try {
-        const response = await fetch(urlPipedream, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                amount: valor,
-                userId: uidUsuario,
-                userName: nomeUsuario,
-                type: 'deposito_pix'
-            })
-        });
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSANDO...';
 
-        const data = await response.json();
+            try {
+                const response = await fetch(urlNetlify, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        amount: valor,
+                        userId: uidUsuario,
+                        userName: nomeUsuario,
+                        userDocument: cpfInput // Parâmetro exigido pelo novo backend EvoPay
+                    })
+                });
 
-        if (data.success) {
-            document.getElementById('deposito-screen').style.display = 'none';
-            document.getElementById('qr-container').style.display = 'block';
+                const data = await response.json();
 
-            // ATUALIZADO: Nomes batendo com o Pipedream
-            pixGlobal = data.pix_code; 
-            document.getElementById('pix-copy-text').innerText = pixGlobal;
-            document.getElementById('qr-img').src = data.qr_image; // Aqui estava o erro!
+                if (data.success || response.ok) {
+                    document.getElementById('deposito-screen').style.display = 'none';
+                    document.getElementById('qr-container').style.display = 'block';
 
-            monitorarHistoricoDepot();
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha ao gerar PIX.', background: '#1a0505', color: '#fff' });
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-bolt"></i> GERAR PIX AGORA';
-    }
+                    pixGlobal = data.pixCode || data.pix_code; 
+                    document.getElementById('pix-copy-text').innerText = pixGlobal;
+                    document.getElementById('qr-img').src = data.qrImage || data.qr_image; 
+
+                    // Inicia o monitoramento da transação pelo transactionId retornado da API
+                    monitorarPagamento(data.transactionId, valor);
+                } else {
+                    throw new Error(data.error || 'Erro desconhecido');
+                }
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Erro', text: error.message || 'Falha ao gerar PIX com a EvoPay.', background: '#1a0505', color: '#fff' });
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt"></i> GERAR PIX AGORA';
+            }
         }
 
         window.copiarPix = function() {
