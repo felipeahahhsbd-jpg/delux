@@ -3,240 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sacar - Nexus</title>
+    <title>Solicitar Saque - Nexus Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
     <style>
+        /* DESIGN SYSTEM PREMIUM */
         :root {
-            --bg: linear-gradient(180deg, #1a0505 0%, #000000 100%);
-            --card: rgba(255, 255, 255, 0.05);
-            --red: #e74c3c;
-            --green: #2ecc71;
-            --gold: #FFD700;
+            --bg-main: #0b0f1a;
+            --bg-card: #121826;
+            --primary: #4f8cff;
+            --secondary: #7cf3ff;
+            --accent: #9b8cff;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --text: #ffffff;
+            --text-soft: #9aa4b2;
+            --radius: 18px;
         }
 
-        /* REMOÇÃO GLOBAL DE CONTORNOS AZUIS */
         * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+            margin: 0; padding: 0; box-sizing: border-box; 
             font-family: 'Inter', sans-serif; 
             outline: none !important; 
             -webkit-tap-highlight-color: transparent; 
         }
 
         body { 
-            background: var(--bg); 
-            color: white; 
-            padding: 20px; 
+            background: linear-gradient(180deg, var(--bg-main) 0%, #05070f 100%); 
+            color: var(--text); 
             min-height: 100vh; 
+            padding-bottom: 40px;
         }
 
-        .header { display: flex; align-items: center; margin-bottom: 30px; gap: 15px; }
-        .header a { color: white; text-decoration: none; font-size: 1.2rem; }
-        .header b { color: var(--red); }
+        /* ANIMAÇÕES */
+        .fade-in { animation: fadeIn 0.8s ease-in-out; }
+        .slide-up { animation: slideUp 0.6s ease-out; }
+        .hover-scale { transition: transform 0.3s ease; }
+        .hover-scale:active { transform: scale(0.98); }
 
-        .balance-info { 
-            background: var(--card); 
-            padding: 20px; 
-            border-radius: 15px; 
-            text-align: center; 
-            margin-bottom: 25px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-        }
-        .balance-info h2 { color: var(--gold); font-size: 1.8rem; margin-top: 5px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .saque-form { 
-            background: var(--card); 
-            padding: 20px; 
-            border-radius: 20px; 
-            border: 1px solid rgba(255,255,255,0.1); 
+        /* HEADER MODERNO */
+        .header-withdraw {
+            padding: 40px 25px 30px;
+            background: rgba(18, 24, 38, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 25px;
         }
+
+        .back-btn {
+            position: absolute; top: 45px; left: 20px;
+            color: var(--text); font-size: 1.2rem; text-decoration: none;
+        }
+
+        .header-withdraw h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; }
+        .balance-display { margin-top: 10px; }
+        .balance-display small { color: var(--text-soft); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .balance-display h2 { font-size: 2.2rem; font-weight: 800; color: var(--secondary); letter-spacing: -1px; margin-top: 5px; }
+
+        /* CARD PRINCIPAL */
+        .container { padding: 0 20px; }
         
-        .horario-alerta {
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid var(--red);
+        .withdraw-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .horario-tag {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
             padding: 10px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 0.75rem;
             text-align: center;
-            margin-bottom: 15px;
-            color: #ff9a9a;
+            margin-bottom: 20px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-weight: 500;
         }
 
-        .input-group { margin-bottom: 15px; position: relative; }
-        label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #ccc; padding-left: 5px; }
-
-        input { 
-            width: 100%; 
-            padding: 15px; 
-            background: rgba(0,0,0,0.4); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 12px; 
-            color: white; 
-            font-size: 1rem;
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: block; font-size: 0.75rem; color: var(--text-soft); margin-bottom: 8px; font-weight: 600; padding-left: 5px; }
+        
+        input, .select-button {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 16px;
+            color: white;
+            font-size: 0.95rem;
             transition: 0.3s;
         }
 
-        input:focus { 
-            border-color: var(--red); 
-            background: rgba(255, 255, 255, 0.08); 
-            box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(79, 140, 255, 0.2);
+            background: rgba(15, 23, 42, 0.8);
         }
 
-        /* --- MENU DROPDOWN CUSTOMIZADO --- */
-        .custom-select {
-            position: relative;
-            width: 100%;
-        }
-
-        .select-button {
-            width: 100%;
-            padding: 15px;
-            background: rgba(0,0,0,0.4);
+        /* CUSTOM SELECT PREMIUM */
+        .custom-select { position: relative; }
+        .select-button { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .select-button i { color: var(--primary); font-size: 0.8rem; }
+        
+        .options-container {
+            position: absolute; top: 110%; left: 0; width: 100%;
+            background: #161e2e; border-radius: 14px;
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
+            display: none; z-index: 100; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .options-container.show { display: block; animation: fadeIn 0.2s; }
+        .option { padding: 15px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.02); cursor: pointer; }
+        .option:hover { background: var(--primary); color: white; }
+
+        /* TAX DISPLAY */
+        .tax-box {
+            background: rgba(255,255,255,0.02);
+            border-radius: 14px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px dashed rgba(255,255,255,0.1);
+        }
+        .tax-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; color: var(--text-soft); }
+        .tax-row.total { border-top: 1px solid rgba(255,255,255,0.05); pt: 8px; margin-top: 8px; font-weight: 700; color: var(--success); font-size: 0.95rem; }
+
+        /* BOTÃO SACAR */
+        .btn-withdraw {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
             color: white;
+            font-weight: 800;
             font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(79, 140, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-withdraw:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(79, 140, 255, 0.4); }
+        .btn-withdraw:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+
+        /* CARD DE INFORMAÇÕES ADICIONAIS */
+        .info-card-saque {
+            margin-top: 25px;
+            background: rgba(79, 140, 255, 0.05);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid rgba(79, 140, 255, 0.1);
+        }
+        .info-card-saque h4 { font-size: 0.85rem; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .info-list { list-style: none; }
+        .info-list li { font-size: 0.75rem; color: var(--text-soft); margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .info-list li b { color: var(--text); }
+
+        /* HISTÓRICO VISUAL */
+        .history-section { margin-top: 30px; }
+        .history-section h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 15px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 1px; }
+        .history-item {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 14px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
-            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.02);
         }
+        .hist-left p { font-size: 0.85rem; font-weight: 600; }
+        .hist-left small { color: var(--text-soft); font-size: 0.7rem; }
+        .hist-status { font-size: 0.65rem; padding: 4px 10px; border-radius: 50px; font-weight: 700; }
+        .status-pendente { background: rgba(155, 140, 255, 0.15); color: var(--accent); }
 
-        .select-button.active {
-            border-color: var(--red);
-            box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
-        }
-
-        .select-button i {
-            color: var(--red);
-            transition: 0.3s;
-        }
-
-        .select-button.active i {
-            transform: rotate(180deg);
-        }
-
-        .options-container {
-            position: absolute;
-            top: 110%;
-            left: 0;
-            width: 100%;
-            background: #1a0505;
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            border-radius: 12px;
-            overflow: hidden;
-            display: none;
-            z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-        }
-
-        .options-container.show {
-            display: block;
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .option {
-            padding: 15px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.95rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .option:last-child { border-bottom: none; }
-
-        .option:active {
-            background: var(--red);
-            color: white;
-        }
-
-        .tax-display { 
-            background: rgba(255,255,255,0.03); 
-            padding: 12px; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
-            font-size: 0.85rem; 
-            border: 1px dashed rgba(255,255,255,0.1);
-        }
-        .tax-line { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .tax-line.total { border-top: 1px solid #333; padding-top: 5px; font-weight: bold; color: var(--green); }
-
-        .btn-sacar { 
-            width: 100%; 
-            padding: 16px; 
-            border-radius: 12px; 
-            border: none; 
-            background: var(--red); 
-            color: white; 
-            font-weight: bold; 
-            font-size: 1rem; 
-            cursor: pointer; 
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
-        }
-        .btn-sacar:active { transform: scale(0.98); }
-        .btn-sacar:disabled { opacity: 0.5; cursor: not-allowed; }
+        /* SWEETALERT CUSTOM */
+        div.swal2-popup { background: var(--bg-card) !important; color: var(--text) !important; border-radius: 24px !important; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="home.html"><i class="fas fa-chevron-left"></i></a>
-        <span><b>Nexus</b>Saque</span>
+    <div class="header-withdraw fade-in">
+        <a href="home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h1>Solicitar Saque</h1>
+        <div class="balance-display">
+            <small>Saldo disponível para retirada</small>
+            <h2 id="current-balance">R$ 0,00</h2>
+        </div>
     </div>
 
-    <div class="balance-info">
-        <small>Saldo disponível para saque (Lucros)</small>
-        <h2 id="current-balance">R$ 0,00</h2>
-    </div>
+    <div class="container slide-up">
+        <div class="withdraw-card">
+            <div class="horario-tag">
+                <i class="fas fa-clock"></i> Horário de processamento: 09:00 às 18:00
+            </div>
 
-    <div class="saque-form">
-        <div class="horario-alerta">
-            <i class="fas fa-clock"></i> Horário de Saque: 09:00 às 18:00
+            <div class="input-group">
+                <label>Método de Recebimento</label>
+                <div class="custom-select">
+                    <div class="select-button" id="select-btn">
+                        <span id="selected-value">CPF (PIX)</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="options-container" id="options-list">
+                        <div class="option" data-value="cpf">CPF</div>
+                        <div class="option" data-value="email">E-mail</div>
+                        <div class="option" data-value="phone">Telefone (Celular)</div>
+                        <div class="option" data-value="evp">Chave Aleatória (EVP)</div>
+                    </div>
+                    <input type="hidden" id="pix-type" value="cpf">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Chave PIX</label>
+                <input type="text" id="pix-key" placeholder="Digite sua chave aqui">
+            </div>
+
+            <div class="input-group">
+                <label>Valor do Saque (R$)</label>
+                <input type="number" id="saque-amount" placeholder="Mínimo R$ 35,00">
+            </div>
+
+            <div class="tax-box">
+                <div class="tax-row"><span>Taxa de Serviço (10%):</span> <span id="val-taxa">R$ 0,00</span></div>
+                <div class="tax-row total"><span>Valor Líquido:</span> <span id="val-final">R$ 0,00</span></div>
+            </div>
+
+            <button class="btn-withdraw hover-scale" id="btnPerformSaque">
+                CONFIRMAR RETIRADA
+            </button>
         </div>
 
-        <div class="input-group">
-            <label>Tipo de Chave PIX</label>
-            <div class="custom-select">
-                <div class="select-button" id="select-btn">
-                    <span id="selected-value">CPF</span>
-                    <i class="fas fa-chevron-down"></i>
+        <div class="info-card-saque">
+            <h4><i class="fas fa-info-circle"></i> Regras de Saque</h4>
+            <ul class="info-list">
+                <li>Saque Mínimo: <b>R$ 35,00</b></li>
+                <li>Tempo de Espera: <b>Até 24 horas</b></li>
+                <li>Taxa Administrativa: <b>10%</b></li>
+                <li>Limite Diário: <b>1 solicitação/dia</b></li>
+            </ul>
+        </div>
+
+        <div class="history-section">
+            <h3>Última Atividade</h3>
+            <div class="history-item">
+                <div class="hist-left">
+                    <p>Saque Solicitado</p>
+                    <small>Carregando histórico...</small>
                 </div>
-                <div class="options-container" id="options-list">
-                    <div class="option" data-value="cpf">CPF</div>
-                    <div class="option" data-value="email">E-mail</div>
-                    <div class="option" data-value="phone">Telefone (Celular)</div>
-                    <div class="option" data-value="evp">Chave Aleatória (EVP)</div>
-                </div>
-                <input type="hidden" id="pix-type" value="cpf">
+                <div class="hist-status status-pendente">Sincronizando</div>
             </div>
         </div>
-
-        <div class="input-group">
-            <label>Chave PIX</label>
-            <input type="text" id="pix-key" placeholder="Digite sua chave">
-        </div>
-
-        <div class="input-group">
-            <label>Valor para sacar (R$)</label>
-            <input type="number" id="saque-amount" placeholder="Mínimo 35.00">
-        </div>
-
-        <div class="tax-display">
-            <div class="tax-line"><span>Taxa (10%):</span> <span id="val-taxa">R$ 0,00</span></div>
-            <div class="tax-line total"><span>Você recebe:</span> <span id="val-final">R$ 0,00</span></div>
-        </div>
-
-        <button class="btn-sacar" id="btnPerformSaque">SOLICITAR SAQUE</button>
     </div>
 
     <script type="module">
@@ -246,11 +276,11 @@
 
         const firebaseConfig = {
             apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
-    authDomain: "monety-site-9175f.firebaseapp.com",
-    projectId: "monety-site-9175f",
-    storageBucket: "monety-site-9175f.firebasestorage.app",
-    messagingSenderId: "840821848803",
-    appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
+            authDomain: "monety-site-9175f.firebaseapp.com",
+            projectId: "monety-site-9175f",
+            storageBucket: "monety-site-9175f.firebasestorage.app",
+            messagingSenderId: "840821848803",
+            appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -260,13 +290,13 @@
         let uidAtual = null;
         let saldoAtual = 0;
 
+        // LOGICA DO SELECT CUSTOMIZADO
         const selectBtn = document.getElementById('select-btn');
         const optionsList = document.getElementById('options-list');
         const selectedValue = document.getElementById('selected-value');
         const hiddenInput = document.getElementById('pix-type');
 
         selectBtn.addEventListener('click', () => {
-            selectBtn.classList.toggle('active');
             optionsList.classList.toggle('show');
         });
 
@@ -276,14 +306,12 @@
                 selectedValue.innerText = option.innerText;
                 hiddenInput.value = value;
                 optionsList.classList.remove('show');
-                selectBtn.classList.remove('active');
             });
         });
 
         window.addEventListener('click', (e) => {
             if (!selectBtn.contains(e.target)) {
                 optionsList.classList.remove('show');
-                selectBtn.classList.remove('active');
             }
         });
 
@@ -314,14 +342,15 @@
             const agora = new Date();
             const hora = agora.getHours();
             
+            // Verificação de horário (Original)
             if (hora < 9 || hora >= 18) {
                 return Swal.fire({ 
                     icon: 'warning', 
-                    title: 'Horário Indisponível', 
+                    title: 'Fora do Horário', 
                     text: 'Os saques só podem ser realizados entre 09:00 e 18:00.', 
-                    background: '#1a0505', 
+                    background: '#121826', 
                     color: '#fff',
-                    confirmButtonColor: '#e74c3c'
+                    confirmButtonColor: '#4f8cff'
                 });
             }
 
@@ -329,25 +358,24 @@
             const chavePix = document.getElementById('pix-key').value;
             const tipoPix = document.getElementById('pix-type').value;
 
-            if (!chavePix) return Swal.fire({ icon: 'error', title: 'Atenção', text: 'Insira sua chave PIX.', background: '#1a0505', color: '#fff' });
+            if (!chavePix) return Swal.fire({ icon: 'error', title: 'Atenção', text: 'Insira sua chave PIX.', background: '#121826', color: '#fff' });
             
-            // ATUALIZADO: Mínimo de R$ 35,00
-            if (isNaN(valorSaque) || valorSaque < 1) {
+            if (isNaN(valorSaque) || valorSaque < 35) {
                 return Swal.fire({ 
                     icon: 'error', 
-                    title: 'Mínimo insuficiente', 
+                    title: 'Mínimo de R$ 35,00', 
                     text: 'O valor mínimo para saque é R$ 35,00.', 
-                    background: '#1a0505', 
+                    background: '#121826', 
                     color: '#fff',
-                    confirmButtonColor: '#e74c3c'
+                    confirmButtonColor: '#4f8cff'
                 });
             }
 
-            if (valorSaque > saldoAtual) return Swal.fire({ icon: 'error', title: 'Saldo insuficiente', text: 'Você não tem saldo de lucro suficiente para este saque.', background: '#1a0505', color: '#fff' });
+            if (valorSaque > saldoAtual) return Swal.fire({ icon: 'error', title: 'Saldo insuficiente', text: 'Você não tem saldo de lucro suficiente.', background: '#121826', color: '#fff' });
 
             const btn = document.getElementById('btnPerformSaque');
             btn.disabled = true;
-            Swal.fire({ title: 'Processando...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1a0505', color: '#fff' });
+            Swal.fire({ title: 'Processando...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#121826', color: '#fff' });
 
             try {
                 const taxa = valorSaque * 0.10;
@@ -370,12 +398,12 @@
                     timestamp: Timestamp.now()
                 });
 
-                await Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Solicitação de saque enviada!', timer: 2500, showConfirmButton: false, background: '#1a0505', color: '#fff' });
+                await Swal.fire({ icon: 'success', title: 'Solicitado!', text: 'Sua retirada está em processamento.', timer: 3000, showConfirmButton: false, background: '#121826', color: '#fff' });
                 window.location.href = "home.html";
 
             } catch (error) {
                 console.error(error);
-                Swal.fire({ icon: 'error', title: 'Erro técnico', text: 'Ocorreu um erro ao processar. Tente novamente.', background: '#1a0505', color: '#fff' });
+                Swal.fire({ icon: 'error', title: 'Erro técnico', text: 'Tente novamente em instantes.', background: '#121826', color: '#fff' });
                 btn.disabled = false;
             }
         });
