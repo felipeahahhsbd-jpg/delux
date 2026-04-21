@@ -3,23 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Início - Nexus</title>
+    <title>Início - Nexus Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
+        /* DESIGN SYSTEM PREMIUM FINTECH */
         :root {
-            --bg: linear-gradient(180deg, #1a0505 0%, #000000 100%);
-            --card: rgba(255, 255, 255, 0.05);
-            --red: #e74c3c;
-            --green: #2ecc71;
+            --bg-main: #0b0f1a;
+            --bg-card: #121826;
+            --primary: #4f8cff;
+            --secondary: #7cf3ff;
+            --accent: #9b8cff;
+            --success: #22c55e;
+            --text: #ffffff;
+            --text-soft: #9aa4b2;
+            --radius: 18px;
+
+            /* Sobrescrevendo as antigas variáveis de cores usadas no JS injetado */
+            --red: var(--primary); /* Transforma elementos vermelhos do JS em azul primário */
+            --green: var(--success);
             --gold: #FFD700;
             --telegram: #0088cc;
         }
 
-        /* REMOVENDO O CONTORNO AZUL DE SELEÇÃO E FOCO */
         * { 
             margin: 0; 
             padding: 0; 
@@ -29,171 +38,279 @@
             -webkit-tap-highlight-color: transparent; 
         }
 
-        body { background: var(--bg); color: white; padding-bottom: 110px; min-height: 100vh; overflow-x: hidden; }
+        body { 
+            background: linear-gradient(180deg, var(--bg-main) 0%, #05070f 100%); 
+            color: var(--text); 
+            padding-bottom: 110px; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+
+        /* ANIMAÇÕES GERAIS */
+        .fade-in { animation: fadeIn 0.8s ease-in-out; }
+        .slide-up { animation: slideUp 0.6s ease-out; }
+        .hover-scale { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-scale:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(79,140,255,0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* MURAL DE AVISO DINÂMICO */
         #container-aviso {
             display: none;
-            margin: 10px 20px;
+            margin: 80px 20px 10px; /* Margem ajustada por causa do top-bar fixo */
             padding: 15px;
-            background: rgba(231, 76, 60, 0.15);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            border-radius: 15px;
-            color: #fff;
+            background: rgba(79, 140, 255, 0.1);
+            border: 1px solid rgba(79, 140, 255, 0.3);
+            border-radius: var(--radius);
+            color: var(--secondary);
             font-size: 0.85rem;
             text-align: center;
-            animation: pulse 2s infinite;
+            backdrop-filter: blur(10px);
+            animation: pulse-neon 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        @keyframes pulse-neon {
+            0% { box-shadow: 0 0 0 0 rgba(79, 140, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(79, 140, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 140, 255, 0); }
         }
 
-        /* Top Bar */
-        .top-bar { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .logo-home { font-weight: 700; font-size: 1.2rem; letter-spacing: -1px; }
-        .logo-home span { color: var(--red); }
-        .user-greeting h2 { font-size: 1.1rem; text-transform: capitalize; }
+        /* HEADER MODERNO FIXO (GLASSMORPHISM) */
+        .top-bar { 
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            padding: 20px 25px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(18, 24, 38, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .user-greeting { display: flex; flex-direction: column; }
+        .logo-home { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.5px; }
+        .logo-home span { color: var(--primary); }
+        .user-greeting h2 { font-size: 0.95rem; color: var(--text-soft); font-weight: 500; text-transform: capitalize; margin-top: 2px;}
+        .top-bar-icons { display: flex; gap: 15px; align-items: center; }
+        .top-bar-icons a { color: var(--text); font-size: 1.3rem; transition: color 0.3s; }
+        .top-bar-icons a:hover { color: var(--primary); }
 
-        /* Portfolio Card */
+        /* CARD DE SALDO PREMIUM */
+        .portfolio-wrapper { margin: 100px 20px 20px; } /* Espaço para o header fixo */
         .portfolio-card { 
-            margin: 0 20px; background: var(--card); border-radius: 25px; 
-            padding: 25px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 24px; 
+            padding: 30px 25px; 
+            box-shadow: 0 15px 35px rgba(79, 140, 255, 0.25);
+            position: relative;
+            overflow: hidden;
         }
-        .portfolio-header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
-        .portfolio-header small { color: #888; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 1px; }
-        .balance-main { font-size: 2.2rem; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .stat-item { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.03); }
-        .stat-item span { display: block; font-size: 0.65rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
-        .stat-item strong { font-size: 0.95rem; color: #fff; }
+        /* Efeito de brilho no card */
+        .portfolio-card::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            opacity: 0.5; pointer-events: none;
+        }
 
+        .portfolio-header { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
+        .portfolio-header small { color: rgba(255,255,255,0.8); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; margin-top: 15px; font-weight: 600;}
+        .balance-main { font-size: 2.5rem; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 5px; }
+        
         /* VIP Badges */
-        .vip-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 50px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
-        .vip-bronze { background: #3d1a1a; color: #ff9999; }
-        .vip-ouro { background: linear-gradient(90deg, #ffd700, #b8860b); color: #000; }
-        .vip-diamante { background: linear-gradient(90deg, #e5e4e2, #7f8c8d); color: #000; }
+        .vip-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); }
+        .vip-bronze { color: #f0c090; }
+        .vip-ouro { color: #FFD700; }
+        .vip-diamante { color: var(--secondary); border-color: var(--secondary); text-shadow: 0 0 8px rgba(124, 243, 255, 0.5); }
 
-        /* Botões de Ação */
-        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .action-btn { background: var(--card); border-radius: 18px; padding: 18px; text-align: center; color: white; text-decoration: none; border: 1px solid rgba(255,255,255,0.05); }
-        .action-btn i { font-size: 1.6rem; margin-bottom: 10px; display: block; color: var(--red); }
+        /* GRID DE ESTATÍSTICAS */
+        .stats-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; 
+            margin: 0 20px 25px; 
+        }
+        .stat-item { 
+            background: var(--bg-card); padding: 15px; border-radius: var(--radius); 
+            border: 1px solid rgba(255,255,255,0.02); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; gap: 5px;
+        }
+        .stat-item span { font-size: 0.7rem; color: var(--text-soft); font-weight: 600; text-transform: uppercase; }
+        .stat-item strong { font-size: 1.1rem; color: var(--text); font-weight: 700; }
 
-        /* Listas de Investimentos */
-        .plans-stack { padding: 15px 20px; display: flex; flex-direction: column; gap: 15px; }
-        .active-plan-item { background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); border-radius: 22px; padding: 18px; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; }
-        .plan-progress-bg { height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; width: 100%; margin-top: 10px; }
+        /* AÇÕES RÁPIDAS (GRID 2x2) */
+        .actions-section { padding: 0 20px 10px; }
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .action-btn { 
+            background: var(--bg-card); border-radius: var(--radius); padding: 20px 15px; 
+            text-align: center; color: var(--text); text-decoration: none; 
+            border: 1px solid rgba(255,255,255,0.03); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 600;
+        }
+        .action-btn i { 
+            font-size: 1.6rem; margin-bottom: 12px; 
+            background: -webkit-linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* LISTA DE INVESTIMENTOS Premium */
+        .section-title { padding: 15px 25px 5px; font-size: 0.9rem; color: var(--text); font-weight: 700; letter-spacing: 0.5px; }
+        .plans-stack { padding: 10px 20px; display: flex; flex-direction: column; gap: 15px; }
         
+        /* Modificando os elementos injetados pelo JS via CSS */
+        .active-plan-item { 
+            background: var(--bg-card); border-radius: var(--radius); padding: 20px; 
+            border: 1px solid rgba(79, 140, 255, 0.15); position: relative; overflow: hidden; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .active-plan-item::before {
+            content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        
+        .plan-progress-bg { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; width: 100%; margin-top: 15px; overflow: hidden; }
+        
+        /* A barra de progresso perde o vermelho e ganha degradê neon */
         .plan-progress-bar { 
-            height: 100%; background: var(--red); border-radius: 10px; 
-            box-shadow: 0 0 10px var(--red); 
+            height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)) !important; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px var(--primary) !important; 
             transition: width 1s linear;
         }
 
         /* Telegram Button */
         .btn-tg {
-            position: fixed; bottom: 85px; right: 20px; background: var(--telegram);
-            width: 50px; height: 50px; border-radius: 50%; display: flex;
+            position: fixed; bottom: 95px; right: 20px; background: var(--telegram);
+            width: 55px; height: 55px; border-radius: 50%; display: flex;
             align-items: center; justify-content: center; color: white;
-            font-size: 1.5rem; z-index: 999; text-decoration: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            font-size: 1.6rem; z-index: 999; text-decoration: none;
+            box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+            transition: transform 0.3s;
         }
+        .btn-tg:hover { transform: scale(1.1); }
 
         /* Social Pop */
-        .social-pop { position: fixed; bottom: 85px; left: 20px; right: 80px; background: white; color: #333; padding: 12px 15px; border-radius: 15px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9998; transform: translateX(-150%); transition: 0.5s ease-in-out; }
+        .social-pop { 
+            position: fixed; bottom: 95px; left: 20px; right: 85px; 
+            background: var(--bg-card); color: var(--text); padding: 14px 18px; 
+            border-radius: var(--radius); display: flex; align-items: center; gap: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 9998; 
+            transform: translateX(-150%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 1px solid rgba(255,255,255,0.05);
+        }
         .social-pop.show { transform: translateX(0); }
 
-        /* Nav Bottom COM EFEITO VIDRO VERMELHO NO ATIVO */
+        /* Nav Bottom MODERNO (Estilo App) */
         .nav-bottom { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: rgba(0, 0, 0, 0.9); 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 12px 0; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            backdrop-filter: blur(10px);
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: rgba(18, 24, 38, 0.85); 
+            display: flex; justify-content: space-around; 
+            padding: 15px 10px 25px; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
         }
         .nav-item { 
-            color: #555; 
-            text-align: center; 
-            text-decoration: none; 
-            font-size: 0.7rem; 
-            padding: 8px 12px;
-            border-radius: 15px;
-            transition: 0.3s;
+            color: var(--text-soft); text-align: center; text-decoration: none; 
+            font-size: 0.7rem; font-weight: 500; padding: 5px;
+            transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 6px;
         }
-        .nav-item i { display: block; font-size: 1.3rem; margin-bottom: 5px; }
+        .nav-item i { font-size: 1.4rem; transition: all 0.3s; }
 
-        .nav-item.active { 
-            color: #fff; 
-            background: rgba(231, 76, 60, 0.2); 
-            border: 1px solid rgba(231, 76, 60, 0.4);
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+        .nav-item.active { color: var(--text); }
+        .nav-item.active i { 
+            color: var(--primary); 
+            filter: drop-shadow(0 0 8px rgba(79, 140, 255, 0.6));
+            transform: translateY(-2px);
         }
-        .nav-item.active i { color: var(--red); }
+
+        /* FORÇANDO O NOVO ESTILO NOS ALERTAS DO JS ORIGINAL */
+        div.swal2-popup { background: var(--bg-card) !important; color: var(--text) !important; border: 1px solid rgba(79, 140, 255, 0.2); }
+        .swal2-title, .swal2-html-container { color: var(--text) !important; }
+        .swal2-confirm { background-color: var(--primary) !important; color: #fff !important; box-shadow: 0 4px 15px rgba(79, 140, 255, 0.3) !important; }
+
     </style>
 </head>
 <body>
 
-    <a href="https://t.me/+Z6pv35vKSuA4MDhh" target="_blank" class="btn-tg"><i class="fab fa-telegram-plane"></i></a>
+    <a href="https://t.me/+Z6pv35vKSuA4MDhh" target="_blank" class="btn-tg hover-scale"><i class="fab fa-telegram-plane"></i></a>
 
     <div id="social-pop" class="social-pop">
-        <i class="fas fa-check-circle" style="color: #2ecc71;"></i>
-        <p id="social-content" style="font-size: 0.75rem;"></p>
+        <i class="fas fa-check-circle" style="color: var(--success); font-size: 1.2rem;"></i>
+        <p id="social-content" style="font-size: 0.8rem;"></p>
     </div>
 
-    <div id="container-aviso" class="animate__animated animate__fadeInDown">
-        <i class="fas fa-bullhorn" style="margin-right: 8px; color: var(--red);"></i>
-        <span id="texto-aviso"></span>
-    </div>
-
-    <div class="top-bar">
+    <div class="top-bar slide-up">
         <div class="user-greeting">
             <div class="logo-home"><span>Nex</span>us</div>
             <h2 id="home-nome">Carregando...</h2>
         </div>
-        <a href="perfil.html" style="color:white; font-size: 1.5rem;"><i class="fas fa-user-circle"></i></a>
-    </div>
-
-    <div class="portfolio-card">
-        <div class="portfolio-header">
-            <div id="vip-tag" class="vip-badge vip-bronze">
-                <i class="fas fa-crown"></i> <span id="vip-nome">VIP Bronze</span>
-            </div>
-            <br><small>Saldo Total Conta</small>
-            <div class="balance-main">
-                <span id="home-saldo">R$ 0,00</span>
-                <i class="fas fa-eye" id="toggle-balance" style="font-size: 1.2rem; color: rgba(255,255,255,0.2); cursor: pointer;"></i>
-            </div>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-item"><span>Total Investido</span><strong id="stat-investido">R$ 0,00</strong></div>
-            <div class="stat-item"><span>Total Ganhos</span><strong id="stat-ganhos" style="color:var(--green)">R$ 0,00</strong></div>
-            <div class="stat-item"><span>Para Investir</span><strong id="stat-investir">R$ 0,00</strong></div>
-            <div class="stat-item"><span>Para Saque</span><strong id="stat-saque">R$ 0,00</strong></div>
+        <div class="top-bar-icons">
+            <a href="#"><i class="far fa-bell"></i></a>
+            <a href="perfil.html"><i class="fas fa-user-circle"></i></a>
         </div>
     </div>
 
-    <div class="actions-grid">
-        <a href="deposito.html" class="action-btn"><i class="fas fa-wallet"></i>Depositar</a>
-        <a href="saque.html" class="action-btn"><i class="fas fa-hand-holding-usd"></i>Sacar</a>
+    <div id="container-aviso" class="animate__animated animate__fadeInDown">
+        <i class="fas fa-bullhorn" style="margin-right: 8px; color: var(--secondary);"></i>
+        <span id="texto-aviso"></span>
     </div>
 
-    <h3 style="padding: 0 25px; font-size: 0.8rem; color: #666; text-transform: uppercase; font-weight: 700;">Meus Investimentos</h3>
+    <div class="portfolio-wrapper slide-up">
+        <div class="portfolio-card hover-scale">
+            <div class="portfolio-header">
+                <div id="vip-tag" class="vip-badge vip-bronze">
+                    <i class="fas fa-crown"></i> <span id="vip-nome">VIP Bronze</span>
+                </div>
+                <small>Saldo Total Disponível</small>
+                <div class="balance-main">
+                    <span id="home-saldo">R$ 0,00</span>
+                    <i class="fas fa-eye" id="toggle-balance" style="font-size: 1.2rem; color: rgba(255,255,255,0.6); cursor: pointer; transition: 0.3s;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid fade-in">
+        <div class="stat-item"><span>Total Investido</span><strong id="stat-investido">R$ 0,00</strong></div>
+        <div class="stat-item"><span>Total Ganhos</span><strong id="stat-ganhos" style="color:var(--success)">R$ 0,00</strong></div>
+        <div class="stat-item"><span>Para Investir</span><strong id="stat-investir">R$ 0,00</strong></div>
+        <div class="stat-item"><span>Para Saque</span><strong id="stat-saque">R$ 0,00</strong></div>
+    </div>
+
+    <div class="actions-section fade-in">
+        <div class="actions-grid">
+            <a href="deposito.html" class="action-btn hover-scale">
+                <i class="fas fa-arrow-down"></i>Depositar
+            </a>
+            <a href="saque.html" class="action-btn hover-scale">
+                <i class="fas fa-arrow-up"></i>Sacar
+            </a>
+            <a href="planos.html" class="action-btn hover-scale">
+                <i class="fas fa-chart-line"></i>Investir
+            </a>
+            <a href="indicacao.html" class="action-btn hover-scale">
+                <i class="fas fa-user-friends"></i>Convidar
+            </a>
+        </div>
+    </div>
+
+    <h3 class="section-title fade-in">Meus Investimentos</h3>
     <div id="lista-investimentos" class="plans-stack"></div>
 
     <nav class="nav-bottom">
-        <a href="home.html" class="nav-item active"><i class="fas fa-home"></i>Início</a>
-        <a href="planos.html" class="nav-item"><i class="fas fa-chart-pie"></i>Planos</a>
-        <a href="indicacao.html" class="nav-item"><i class="fas fa-share-alt"></i>Indicar</a>
-        <a href="perfil.html" class="nav-item"><i class="fas fa-user-alt"></i>Perfil</a>
+        <a href="home.html" class="nav-item active"><i class="fas fa-home"></i><span>Início</span></a>
+        <a href="planos.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Planos</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="fas fa-share-nodes"></i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item"><i class="fas fa-user"></i><span>Perfil</span></a>
     </nav>
 
     <script type="module">
@@ -232,7 +349,7 @@ function showPop() {
     const nome = nomes_pop[Math.floor(Math.random()*nomes_pop.length)];
     const tipo = tipos_pop[Math.floor(Math.random()*tipos_pop.length)];
     const valor = (Math.random() * (450 - 30) + 30).toFixed(2);
-    content.innerHTML = `<b>${nome}</b> ${tipo} <span style="color:#2ecc71; font-weight:700">R$ ${valor}</span>`;
+    content.innerHTML = `<b>${nome}</b> ${tipo} <span style="color:var(--success); font-weight:700">R$ ${valor}</span>`;
     pop.classList.add('show');
     setTimeout(() => pop.classList.remove('show'), 4000);
 }
@@ -353,7 +470,7 @@ async function carregarInvestimentos(uid) {
                         </div>
                         <div style="text-align:right">
                             <strong style="font-size:1rem">${formatarMoeda(inv.valor)}</strong>
-                            <br><small style="color:#888; font-size:0.6rem; text-transform:uppercase">Investido</small>
+                            <br><small style="color:var(--text-soft); font-size:0.6rem; text-transform:uppercase">Investido</small>
                         </div>
                     </div>
                     <div class="plan-progress-bg">
@@ -366,7 +483,7 @@ async function carregarInvestimentos(uid) {
                 </div>`;
         });
 
-        document.getElementById('lista-investimentos').innerHTML = htmlContent || '<p style="text-align:center; color:#444; font-size:0.85rem; margin-top:20px;">Nenhum investimento ativo.</p>';
+        document.getElementById('lista-investimentos').innerHTML = htmlContent || '<p style="text-align:center; color:var(--text-soft); font-size:0.85rem; margin-top:20px;">Nenhum investimento ativo.</p>';
         document.getElementById('stat-investido').innerText = formatarMoeda(totalInvestido);
         
         // Atualiza Badge VIP
@@ -383,13 +500,13 @@ async function processarLogicaNegocio(uid, userData) {
     // 1. Verificar boas vindas
     if (!sessionStorage.getItem('notificacaoBoasVindas')) {
         await Swal.fire({
-            title: `<span style="color: #e74c3c;">Nexus</span> Intelligence`,
-            html: `<p style="color: #aaa; font-size: 0.9rem;">Bem-vindo de volta, <b>${userData.nome}</b>!<br>Seus rendimentos são processados a cada 24h.</p>`,
-            background: '#120303',
+            title: `<span style="color: var(--primary);">Nexus</span> Premium`,
+            html: `<p style="color: var(--text-soft); font-size: 0.9rem;">Bem-vindo de volta, <b>${userData.nome}</b>!<br>Seus rendimentos são processados a cada 24h.</p>`,
+            background: '#121826',
             color: '#fff',
             confirmButtonText: 'ACESSAR PAINEL',
-            confirmButtonColor: '#e74c3c',
-            borderRadius: '25px'
+            confirmButtonColor: '#4f8cff',
+            borderRadius: '24px'
         });
         sessionStorage.setItem('notificacaoBoasVindas', 'true');
     }
