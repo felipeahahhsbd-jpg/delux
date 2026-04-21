@@ -15,6 +15,7 @@
             --gold: #FFD700;
         }
 
+        /* REMOÇÃO GLOBAL DE CONTORNOS E HIGHLIGHTS */
         * { 
             margin: 0; 
             padding: 0; 
@@ -27,277 +28,356 @@
         body { 
             background: var(--bg); 
             color: white; 
-            padding: 20px;
-            min-height: 100vh;
+            padding: 20px; 
+            min-height: 100vh; 
         }
 
-        .header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
+        .header { display: flex; align-items: center; margin-bottom: 30px; gap: 15px; }
+        .header a { color: white; text-decoration: none; font-size: 1.2rem; }
+        .header span { font-weight: bold; }
+
+        .info-card { 
+            background: var(--card); 
+            padding: 20px; 
+            border-radius: 15px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            margin-bottom: 25px; 
+        }
+        .info-card h3 { color: var(--gold); margin-bottom: 10px; font-size: 1.1rem; }
+        .info-card p { font-size: 0.8rem; color: #bbb; line-height: 1.4; }
+
+        .amount-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        
+        .amount-option { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            padding: 15px 5px; 
+            text-align: center; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            font-weight: bold;
+            color: #eee;
+        }
+        
+        .amount-option:active { transform: scale(0.95); }
+
+        .amount-option.active { 
+            border-color: var(--green); 
+            color: var(--green); 
+            background: rgba(46, 204, 113, 0.1); 
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.1);
         }
 
-        .header a {
-            color: white;
-            text-decoration: none;
-            font-size: 20px;
-            width: 40px;
-            height: 40px;
-            background: var(--card);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
+        .custom-amount { margin-bottom: 25px; }
+        .custom-amount label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #888; padding-left: 5px; }
+        
+        .input-wrapper { position: relative; }
+        .input-wrapper span { 
+            position: absolute; 
+            left: 15px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--green); 
+            font-weight: bold; 
         }
 
-        .deposit-card {
-            background: var(--card);
-            border-radius: 24px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
+        input { 
+            width: 100%; 
+            padding: 15px 15px 15px 45px; 
+            background: rgba(0,0,0,0.4); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 14px; 
+            color: white; 
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
         }
 
-        .input-group {
-            text-align: left;
-            margin-bottom: 20px;
+        input:focus {
+            border-color: var(--green);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.15);
         }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #888;
-            font-size: 14px;
-            padding-left: 5px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            color: var(--gold);
-        }
-
-        input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px 15px 15px 45px;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-        }
-
-        .btn-gerar {
-            width: 100%;
-            background: var(--gold);
-            color: black;
-            border: none;
-            padding: 18px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
-        }
-
-        .btn-gerar:disabled { opacity: 0.5; cursor: not-allowed; }
 
         #qr-container {
-            margin-top: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 15px;
-            display: inline-block;
-        }
-
-        #qr-img { width: 200px; height: 200px; }
-
-        .pix-box {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px dashed var(--gold);
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 20px;
-            word-break: break-all;
-            font-size: 12px;
-            color: var(--gold);
-        }
-
-        .btn-copy {
-            background: var(--gold);
+            display: none;
+            background: #ffffff;
             color: black;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            width: 100%;
+            padding: 25px;
+            border-radius: 25px;
+            text-align: center;
             margin-top: 10px;
-            font-weight: 600;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #qr-container h2 { font-size: 1.3rem; margin-bottom: 5px; }
+        #qr-container img { 
+            width: 220px; height: 220px; 
+            margin: 20px 0; 
+            border-radius: 10px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .pix-code-box {
+            background: #f8f9fa; 
+            padding: 12px; 
+            border-radius: 12px;
+            font-size: 0.75rem; 
+            word-break: break-all; 
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px; 
+            color: #444; 
+            min-height: 45px; 
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .btn-depositar { 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 14px; 
+            border: none; 
+            background: var(--green); 
+            color: white; 
+            font-weight: bold; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            margin-bottom: 12px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2);
+        }
+
+        .btn-depositar:active { transform: scale(0.98); }
+        .btn-depositar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-voltar {
+            background: rgba(255,255,255,0.1) !important;
+            color: white !important;
+            box-shadow: none !important;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="home.html"><i class="fas fa-chevron-left"></i></a>
-        <h2>Depósito PIX</h2>
-    </div>
+    <div id="deposito-screen">
+        <div class="header">
+            <a href="home.html"><i class="fas fa-chevron-left"></i></a>
+            <span>Adicionar Saldo</span>
+        </div>
 
-    <div class="deposit-card" id="deposito-screen">
-        <div class="input-group">
-            <label>Valor do Depósito</label>
+        <div class="info-card">
+            <h3><i class="fas fa-shield-alt"></i> Pagamento Seguro</h3>
+            <p>O depósito mínimo é de <b>R$ 1,00</b>. O saldo cai na conta em instantes após o pagamento.</p>
+        </div>
+
+        <div class="amount-grid">
+            <div class="amount-option" onclick="setAmount(1, this)">R$ 1</div>
+            <div class="amount-option" onclick="setAmount(75, this)">R$ 75</div>
+            <div class="amount-option" onclick="setAmount(100, this)">R$ 100</div>
+            <div class="amount-option" onclick="setAmount(150, this)">R$ 150</div>
+            <div class="amount-option" onclick="setAmount(500, this)">R$ 500</div>
+            <div class="amount-option" onclick="setAmount(1000, this)">R$ 1000</div>
+        </div>
+
+        <div class="custom-amount">
+            <label>Valor do depósito:</label>
             <div class="input-wrapper">
-                <i class="fas fa-wallet"></i>
-                <input type="number" id="deposito-valor" placeholder="0.00">
+                <span>R$</span>
+                <input type="number" id="deposito-valor" placeholder="50.00">
             </div>
         </div>
 
-        <div class="input-group">
-            <label>Seu CPF (Apenas números)</label>
-            <div class="input-wrapper">
-                <i class="fas fa-id-card"></i>
-                <input type="text" id="deposito-cpf" placeholder="000.000.000-00">
-            </div>
-        </div>
-
-        <button class="btn-gerar" id="btn-gerar" onclick="processarDeposito()">
+        <button class="btn-depositar" id="btn-gerar" onclick="processarDeposito()">
             <i class="fas fa-bolt"></i> GERAR PIX AGORA
         </button>
     </div>
 
-    <div id="qr-container-wrapper" style="display: none; text-align: center;">
-        <div class="deposit-card">
-            <h3>PIX Gerado com Sucesso!</h3>
-            <p style="color: #888; margin: 10px 0;">Escaneie o código ou copie a chave</p>
-            
-            <div id="qr-container">
-                <img id="qr-img" src="" alt="QR Code">
-            </div>
-
-            <div class="pix-box" id="pix-copy-text">Copiando código...</div>
-            
-            <button class="btn-copy" onclick="copiarPix()">
-                <i class="fas fa-copy"></i> COPIAR CÓDIGO PIX
-            </button>
-
-            <p style="margin-top: 20px; font-size: 14px; color: var(--green);">
-                <i class="fas fa-sync fa-spin"></i> Aguardando pagamento...
-            </p>
-        </div>
+    <div id="qr-container">
+        <h2 style="font-weight: 700;">Pague com PIX</h2>
+        <p style="font-size: 0.85rem; color: #666;">Aponte a câmera ou copie o código abaixo</p>
+        
+        <img id="qr-img" src="" alt="QR Code">
+        
+        <div class="pix-code-box" id="pix-copy-text">Gerando código...</div>
+        
+        <button class="btn-depositar" onclick="copiarPix()">
+            <i class="fas fa-copy"></i> COPIAR CÓDIGO PIX
+        </button>
+        <button class="btn-depositar btn-voltar" onclick="location.reload()">
+            <i class="fas fa-arrow-left"></i> VOLTAR
+        </button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSy...",
-            authDomain: "seu-projeto.firebaseapp.com",
-            projectId: "seu-projeto",
-            storageBucket: "seu-projeto.appspot.com",
-            messagingSenderId: "...",
-            appId: "..."
+            apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
+    authDomain: "monety-site-9175f.firebaseapp.com",
+    projectId: "monety-site-9175f",
+    storageBucket: "monety-site-9175f.firebasestorage.app",
+    messagingSenderId: "840821848803",
+    appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let uidUsuario, nomeUsuario, pixGlobal;
+        let pixGlobal = "";
+        let uidUsuario = null;
+        let emailUsuario = null;
+        let nomeUsuario = "Cliente ByteWay"; 
+        let unsubscribeHistorico = null;
+        
+        const urlPipedream = 'https://eottot41sx25yyz.m.pipedream.net';
 
-        // Verifica login e busca dados do usuário
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 uidUsuario = user.uid;
-                const userDoc = await getDoc(doc(db, "users", uidUsuario));
-                if (userDoc.exists()) {
-                    nomeUsuario = userDoc.data().nome || "Cliente";
-                    if (userDoc.data().cpf) document.getElementById('deposito-cpf').value = userDoc.data().cpf;
+                emailUsuario = user.email;
+                const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+                if(userDoc.exists()) {
+                    nomeUsuario = userDoc.data().nome || "Cliente ByteWay";
                 }
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        window.processarDeposito = async function() {
-            const valorInput = document.getElementById('deposito-valor').value;
-            const cpfInput = document.getElementById('deposito-cpf').value.replace(/\D/g, "");
-            const btn = document.getElementById('btn-gerar');
+        window.setAmount = function(valor, element) {
+            document.getElementById('deposito-valor').value = valor;
+            document.querySelectorAll('.amount-option').forEach(opt => opt.classList.remove('active'));
+            element.classList.add('active');
+        }
 
-            if (!valorInput || parseFloat(valorInput) < 1) {
-                return Swal.fire({ icon: 'error', title: 'Valor inválido', text: 'Depósito mínimo de R$ 1,00', background: '#1a0505', color: '#fff' });
-            }
+        function monitorarHistoricoDepot() {
+            const historicoRef = collection(db, "historico");
+            const q = query(
+                historicoRef,
+                where("userId", "==", uidUsuario),
+                where("tipo", "==", "Depósito"),
+                orderBy("data", "desc"),
+                limit(1)
+            );
 
-            if (cpfInput.length !== 11) {
-                return Swal.fire({ icon: 'error', title: 'CPF Inválido', text: 'Digite os 11 dígitos do seu CPF.', background: '#1a0505', color: '#fff' });
-            }
+            const horaGeracaoPix = new Date();
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSANDO...';
+            unsubscribeHistorico = onSnapshot(q, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const dados = change.doc.data();
+                        const dataFirestore = dados.data.toDate ? dados.data.toDate() : new Date(dados.data);
 
-            try {
-                const response = await fetch('/.netlify/functions/create-payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        amount: parseFloat(valorInput),
-                        userId: uidUsuario,
-                        userName: nomeUsuario,
-                        userDocument: cpfInput
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    pixGlobal = data.pix_code || data.pixCode;
-                    document.getElementById('deposito-screen').style.display = 'none';
-                    document.getElementById('qr-container-wrapper').style.display = 'block';
-                    document.getElementById('qr-img').src = data.qr_image || data.qrImage;
-                    document.getElementById('pix-copy-text').innerText = pixGlobal;
-
-                    // Escuta em tempo real se a transação foi paga
-                    onSnapshot(doc(db, "users", uidUsuario, "transactions", data.transactionId), (docSnap) => {
-                        if (docSnap.exists() && (docSnap.data().status === 'PAID' || docSnap.data().status === 'completed')) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Pagamento Confirmado!',
-                                text: 'Seu saldo foi atualizado.',
-                                background: '#1a0505',
-                                color: '#fff',
-                                timer: 3000,
-                                showConfirmButton: false
-                            }).then(() => {
-                                window.location.href = "home.html";
-                            });
+                        if (dataFirestore >= horaGeracaoPix) {
+                            if (unsubscribeHistorico) unsubscribeHistorico();
+                            exibirSucessoFina(dados.valor);
                         }
-                    });
+                    }
+                });
+            });
+        }
 
-                } else {
-                    throw new Error(data.error || "Erro ao gerar PIX");
+        async function exibirSucessoFina(valor) {
+            const userDoc = await getDoc(doc(db, "usuarios", uidUsuario));
+            const saldoFinal = userDoc.exists() ? userDoc.data().saldo : 0;
+
+            Swal.fire({
+                title: 'DEPÓSITO CONFIRMADO!',
+                html: `
+                    <div style="padding: 15px; color: #fff; text-align: center;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; color: #2ecc71; margin-bottom: 15px;"></i>
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;">Recebemos seu PIX de <b>R$ ${valor.toFixed(2)}</b></p>
+                        <p style="font-size: 0.9rem; color: #bbb;">Seu saldo foi atualizado para:</p>
+                        <h2 style="color: #2ecc71; margin-top: 5px;">R$ ${saldoFinal.toFixed(2)}</h2>
+                    </div>
+                `,
+                background: '#1a0505',
+                confirmButtonColor: '#2ecc71',
+                confirmButtonText: 'IR PARA HOME',
+                allowOutsideClick: false,
+                backdrop: `rgba(0,0,0,0.8)`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "home.html";
                 }
-            } catch (error) {
-                console.error(error);
-                Swal.fire({ icon: 'error', title: 'Falha', text: error.message, background: '#1a0505', color: '#fff' });
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-bolt"></i> GERAR PIX AGORA';
-            }
-        };
+            });
+        }
+
+        window.processarDeposito = async function() {
+    const valorInput = document.getElementById('deposito-valor');
+    const valor = parseFloat(valorInput.value);
+    const btn = document.getElementById('btn-gerar');
+
+    if (isNaN(valor) || valor < 1) {
+        return Swal.fire({ icon: 'error', title: 'Valor Inválido', text: 'Mínimo R$ 50,00', background: '#1a0505', color: '#fff' });
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSANDO...';
+
+    try {
+        const response = await fetch(urlPipedream, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                amount: valor,
+                userId: uidUsuario,
+                userName: nomeUsuario,
+                type: 'deposito_pix'
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('deposito-screen').style.display = 'none';
+            document.getElementById('qr-container').style.display = 'block';
+
+            // ATUALIZADO: Nomes batendo com o Pipedream
+            pixGlobal = data.pix_code; 
+            document.getElementById('pix-copy-text').innerText = pixGlobal;
+            document.getElementById('qr-img').src = data.qr_image; // Aqui estava o erro!
+
+            monitorarHistoricoDepot();
+        } else {
+            throw new Error(data.error);
+        }
+    } catch (error) {
+        Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha ao gerar PIX.', background: '#1a0505', color: '#fff' });
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-bolt"></i> GERAR PIX AGORA';
+    }
+        }
 
         window.copiarPix = function() {
-            if (!pixGlobal) return;
+            if(!pixGlobal) return;
             navigator.clipboard.writeText(pixGlobal).then(() => {
-                Swal.fire({ icon: 'success', title: 'Copiado!', text: 'Cole no seu aplicativo do banco.', timer: 1500, showConfirmButton: false, background: '#1a0505', color: '#fff' });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Código Copiado!',
+                    text: 'Pague no seu banco agora.',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    background: '#1a0505',
+                    color: '#fff'
+                });
             });
-        };
+        }
     </script>
 </body>
 </html>
