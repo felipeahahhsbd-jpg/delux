@@ -85,37 +85,105 @@
             box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
         }
 
-        /* MENU DROPDOWN CUSTOMIZADO */
-        .custom-select { position: relative; width: 100%; }
+        /* --- MENU DROPDOWN CUSTOMIZADO --- */
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+
         .select-button {
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
-            color: white; font-size: 1rem; display: flex;
-            justify-content: space-between; align-items: center; cursor: pointer;
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .select-button.active { border-color: var(--red); }
+
+        .select-button.active {
+            border-color: var(--red);
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+        }
+
+        .select-button i {
+            color: var(--red);
+            transition: 0.3s;
+        }
+
+        .select-button.active i {
+            transform: rotate(180deg);
+        }
+
         .options-container {
-            position: absolute; top: 110%; left: 0; width: 100%;
-            background: #1a0505; border: 1px solid rgba(231, 76, 60, 0.3);
-            border-radius: 12px; overflow: hidden; display: none; z-index: 100;
+            position: absolute;
+            top: 110%;
+            left: 0;
+            width: 100%;
+            background: #1a0505;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
-        .options-container.show { display: block; }
-        .option { padding: 15px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .option:active { background: var(--red); }
+
+        .options-container.show {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .option {
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .option:last-child { border-bottom: none; }
+
+        .option:active {
+            background: var(--red);
+            color: white;
+        }
 
         .tax-display { 
             background: rgba(255,255,255,0.03); 
-            padding: 12px; border-radius: 10px; margin-bottom: 20px; 
-            font-size: 0.85rem; border: 1px dashed rgba(255,255,255,0.1);
+            padding: 12px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            font-size: 0.85rem; 
+            border: 1px dashed rgba(255,255,255,0.1);
         }
         .tax-line { display: flex; justify-content: space-between; margin-bottom: 5px; }
         .tax-line.total { border-top: 1px solid #333; padding-top: 5px; font-weight: bold; color: var(--green); }
 
         .btn-sacar { 
-            width: 100%; padding: 16px; border-radius: 12px; border: none; 
-            background: var(--red); color: white; font-weight: bold; 
-            font-size: 1rem; cursor: pointer; transition: 0.3s;
+            width: 100%; 
+            padding: 16px; 
+            border-radius: 12px; 
+            border: none; 
+            background: var(--red); 
+            color: white; 
+            font-weight: bold; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
         }
+        .btn-sacar:active { transform: scale(0.98); }
         .btn-sacar:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
@@ -174,16 +242,15 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, Timestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIGURAÇÃO DO FIREBASE (Sua configuração original)
         const firebaseConfig = {
             apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
-            authDomain: "monety-site-9175f.firebaseapp.com",
-            projectId: "monety-site-9175f",
-            storageBucket: "monety-site-9175f.firebasestorage.app",
-            messagingSenderId: "840821848803",
-            appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
+    authDomain: "monety-site-9175f.firebaseapp.com",
+    projectId: "monety-site-9175f",
+    storageBucket: "monety-site-9175f.firebasestorage.app",
+    messagingSenderId: "840821848803",
+    appId: "1:840821848803:web:b99a5528e4bb925518a3d6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -192,10 +259,7 @@
 
         let uidAtual = null;
         let saldoAtual = 0;
-        let nomeUsuario = "";
-        let cpfUsuario = "";
 
-        // UI: Controle do Dropdown Customizado
         const selectBtn = document.getElementById('select-btn');
         const optionsList = document.getElementById('options-list');
         const selectedValue = document.getElementById('selected-value');
@@ -208,33 +272,36 @@
 
         document.querySelectorAll('.option').forEach(option => {
             option.addEventListener('click', () => {
+                const value = option.getAttribute('data-value');
                 selectedValue.innerText = option.innerText;
-                hiddenInput.value = option.getAttribute('data-value');
+                hiddenInput.value = value;
                 optionsList.classList.remove('show');
                 selectBtn.classList.remove('active');
             });
         });
 
-        // Monitorar Autenticação e Saldo em Tempo Real
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                uidAtual = user.uid;
-                // Escuta o saldo da coleção 'usuarios' e campo 'saldoLucro'
-                onSnapshot(doc(db, "usuarios", user.uid), (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        saldoAtual = Number(data.saldoLucro) || 0;
-                        nomeUsuario = data.nome || "";
-                        cpfUsuario = data.cpf || "";
-                        document.getElementById('current-balance').innerText = `R$ ${saldoAtual.toFixed(2)}`;
-                    }
-                });
-            } else {
-                window.location.href = "login.html";
+        window.addEventListener('click', (e) => {
+            if (!selectBtn.contains(e.target)) {
+                optionsList.classList.remove('show');
+                selectBtn.classList.remove('active');
             }
         });
 
-        // Cálculo de Taxas em tempo real
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                uidAtual = user.uid;
+                await carregarSaldo();
+            } else { window.location.href = "login.html"; }
+        });
+
+        async function carregarSaldo() {
+            const userDoc = await getDoc(doc(db, "usuarios", uidAtual));
+            if(userDoc.exists()) {
+                saldoAtual = Number(userDoc.data().saldoLucro) || 0;
+                document.getElementById('current-balance').innerText = `R$ ${saldoAtual.toFixed(2)}`;
+            }
+        }
+
         document.getElementById('saque-amount').addEventListener('input', (e) => {
             const val = parseFloat(e.target.value) || 0;
             const taxa = val * 0.10;
@@ -243,57 +310,72 @@
             document.getElementById('val-final').innerText = `R$ ${final > 0 ? final.toFixed(2) : '0,00'}`;
         });
 
-        // EVENTO DE SAQUE ADAPTADO PARA PIPEDREAM
         document.getElementById('btnPerformSaque').addEventListener('click', async () => {
             const agora = new Date();
             const hora = agora.getHours();
             
-            // 1. Validação de Horário
             if (hora < 9 || hora >= 18) {
-                return Swal.fire({ icon: 'warning', title: 'Fora do Horário', text: 'Saques apenas das 09:00 às 18:00.', background: '#1a0505', color: '#fff' });
+                return Swal.fire({ 
+                    icon: 'warning', 
+                    title: 'Horário Indisponível', 
+                    text: 'Os saques só podem ser realizados entre 09:00 e 18:00.', 
+                    background: '#1a0505', 
+                    color: '#fff',
+                    confirmButtonColor: '#e74c3c'
+                });
             }
 
             const valorSaque = parseFloat(document.getElementById('saque-amount').value);
             const chavePix = document.getElementById('pix-key').value;
             const tipoPix = document.getElementById('pix-type').value;
 
-            // 2. Validações Básicas
-            if (!chavePix) return Swal.fire({ icon: 'error', title: 'Erro', text: 'Insira a chave PIX.', background: '#1a0505', color: '#fff' });
-            if (valorSaque < 35) return Swal.fire({ icon: 'error', title: 'Erro', text: 'Mínimo R$ 35,00.', background: '#1a0505', color: '#fff' });
-            if (valorSaque > saldoAtual) return Swal.fire({ icon: 'error', title: 'Erro', text: 'Saldo insuficiente.', background: '#1a0505', color: '#fff' });
+            if (!chavePix) return Swal.fire({ icon: 'error', title: 'Atenção', text: 'Insira sua chave PIX.', background: '#1a0505', color: '#fff' });
+            
+            // ATUALIZADO: Mínimo de R$ 35,00
+            if (isNaN(valorSaque) || valorSaque < 1) {
+                return Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Mínimo insuficiente', 
+                    text: 'O valor mínimo para saque é R$ 35,00.', 
+                    background: '#1a0505', 
+                    color: '#fff',
+                    confirmButtonColor: '#e74c3c'
+                });
+            }
+
+            if (valorSaque > saldoAtual) return Swal.fire({ icon: 'error', title: 'Saldo insuficiente', text: 'Você não tem saldo de lucro suficiente para este saque.', background: '#1a0505', color: '#fff' });
 
             const btn = document.getElementById('btnPerformSaque');
             btn.disabled = true;
-            Swal.fire({ title: 'Enviando solicitação...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1a0505', color: '#fff' });
+            Swal.fire({ title: 'Processando...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#1a0505', color: '#fff' });
 
             try {
-                // AQUI VOCÊ COLOCA A URL DO SEU WORKFLOW DE SAQUE NO PIPEDREAM
-                const PIPEDREAM_SAQUE_URL = "https://eo9elnupivtomta.m.pipedream.net";
+                const taxa = valorSaque * 0.10;
+                const valorLiquido = valorSaque - taxa;
+                const dataHoje = new Date().toLocaleDateString('pt-BR');
 
-                const response = await fetch(PIPEDREAM_SAQUE_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId: uidAtual,
-                        amount: valorSaque,
-                        pixKey: chavePix,
-                        pixType: tipoPix,
-                        ownerName: nomeUsuario,
-                        ownerDocument: cpfUsuario
-                    })
+                await updateDoc(doc(db, "usuarios", uidAtual), {
+                    saldoLucro: increment(-valorSaque)
                 });
 
-                const data = await response.json();
+                await addDoc(collection(db, "saques"), {
+                    userId: uidAtual,
+                    valorSolicitado: Number(valorSaque),
+                    taxaCobrada: taxa,
+                    valorReceber: valorLiquido,
+                    chavePix: chavePix,
+                    pixType: tipoPix,
+                    status: "pendente",
+                    data: dataHoje,
+                    timestamp: Timestamp.now()
+                });
 
-                if (data.success) {
-                    await Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Sua solicitação foi enviada para análise!', timer: 3000, showConfirmButton: false, background: '#1a0505', color: '#fff' });
-                    window.location.href = "home.html";
-                } else {
-                    throw new Error(data.error || "Erro ao processar.");
-                }
+                await Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Solicitação de saque enviada!', timer: 2500, showConfirmButton: false, background: '#1a0505', color: '#fff' });
+                window.location.href = "home.html";
 
             } catch (error) {
-                Swal.fire({ icon: 'error', title: 'Falha', text: error.message, background: '#1a0505', color: '#fff' });
+                console.error(error);
+                Swal.fire({ icon: 'error', title: 'Erro técnico', text: 'Ocorreu um erro ao processar. Tente novamente.', background: '#1a0505', color: '#fff' });
                 btn.disabled = false;
             }
         });
