@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investir - Nexus</title>
+    <title>Investimentos - Nexus</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
-            --bg: linear-gradient(180deg, #1a0505 0%, #000000 100%);
-            --red: #e74c3c;
-            --green: #2ecc71;
-            --gold: #FFD700;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
+            --bg-main: #0b0f1a;
+            --bg-card: #121826;
+            --primary: #4f8cff;
+            --secondary: #7cf3ff;
+            --accent: #9b8cff;
+            --success: #22c55e;
+            --gold: #ffd166;
+            --text: #ffffff;
+            --text-soft: #9aa4b2;
+            --radius: 20px;
         }
 
-        /* REMOVENDO O CONTORNO AZUL DE SELEÇÃO E FOCO */
+        /* RESET & BASE */
         * { 
             margin: 0; 
             padding: 0; 
@@ -28,97 +32,176 @@
             -webkit-tap-highlight-color: transparent; 
         }
 
-        body { background: var(--bg); color: white; padding: 20px; padding-bottom: 110px; min-height: 100vh; }
-
-        .header { text-align: center; margin: 10px 0 25px 0; }
-        .header h2 { font-size: 1.4rem; font-weight: 700; }
-        .header h2 span { color: var(--red); }
-        .header p { font-size: 0.8rem; color: #888; margin-top: 5px; }
-
-        .balance-card {
-            background: var(--glass); border-radius: 20px; padding: 15px;
-            text-align: center; margin-bottom: 25px; border: 1px solid var(--border);
-            backdrop-filter: blur(10px);
+        body { 
+            background: linear-gradient(180deg, var(--bg-main), #05070f); 
+            color: var(--text); 
+            padding-bottom: 110px; 
+            min-height: 100vh; 
         }
-        .balance-card small { color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
-        .balance-card div { font-size: 1.5rem; font-weight: bold; color: #fff; margin-top: 5px; }
 
-        .plans-list { display: flex; flex-direction: column; gap: 25px; }
+        /* ANIMAÇÕES */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-        .plan-card {
-            background: var(--glass); 
-            border: 1px solid var(--border);
-            border-radius: 28px; padding: 30px 20px; 
-            display: flex; flex-direction: column; align-items: center; text-align: center; 
-            position: relative; overflow: hidden;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HEADER PREMIUM */
+        .header { 
+            background: rgba(18, 24, 38, 0.6);
             backdrop-filter: blur(15px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .duration-tag {
-            position: absolute; top: 0; right: 0; background: var(--red);
-            font-size: 0.65rem; font-weight: 900; padding: 8px 20px;
-            border-bottom-left-radius: 20px; text-transform: uppercase;
-        }
-
-        .plan-card h3 { font-size: 0.75rem; color: var(--red); margin-bottom: 5px; letter-spacing: 3px; font-weight: 900; }
-        .min-invest { font-size: 0.65rem; color: #666; text-transform: uppercase; margin-bottom: 10px; }
-        .plan-card .price { font-size: 2.8rem; font-weight: 900; color: #fff; margin-bottom: 20px; letter-spacing: -1px; }
-
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 12px; margin-bottom: 20px; }
-        .info-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.05); }
-        .info-item span { font-size: 0.6rem; color: #888; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .info-item strong { font-size: 0.9rem; color: #fff; }
-
-        .total-box { width: 100%; background: rgba(46, 204, 113, 0.08); border: 1px solid rgba(46, 204, 113, 0.2); padding: 15px; border-radius: 18px; margin-bottom: 25px; }
-        .total-box span { font-size: 0.65rem; color: var(--green); text-transform: uppercase; font-weight: 700; display: block; }
-        .total-box strong { font-size: 1.2rem; color: var(--green); display: block; margin-top: 2px; }
-        
-        .btn-buy { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; padding: 18px; border-radius: 18px; font-weight: 900; cursor: pointer; width: 100%; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3); transition: 0.3s; }
-        .btn-disabled { background: #444 !important; color: #888 !important; cursor: not-allowed !important; box-shadow: none !important; }
-
-        /* NAV BOTTOM COM EFEITO VIDRO VERMELHO NO ATIVO */
-        .nav-bottom { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: rgba(0, 0, 0, 0.9); 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 12px 0; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            backdrop-filter: blur(10px);
-            z-index: 10000;
-            height: 80px;
-            align-items: center;
-        }
-        .nav-item { 
-            color: #555; 
             text-align: center; 
-            text-decoration: none; 
-            flex: 1; 
+            padding: 30px 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 25px; 
+            animation: fadeIn 0.6s ease-out;
+        }
+        .header h2 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
+        .header h2 span { 
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p { font-size: 0.9rem; color: var(--text-soft); margin-top: 8px; font-weight: 500; }
+
+        /* CARD DE SALDO */
+        .balance-container { padding: 0 20px; }
+        .balance-card {
+            background: linear-gradient(135deg, rgba(79, 140, 255, 0.1), rgba(155, 140, 255, 0.05));
+            border-radius: var(--radius); 
+            padding: 25px 20px;
+            text-align: center; 
+            margin-bottom: 30px; 
+            border: 1px solid rgba(79, 140, 255, 0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(79, 140, 255, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+        .balance-card small { color: var(--primary); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+        .balance-card div { font-size: 2.2rem; font-weight: 900; color: var(--text); margin-top: 8px; text-shadow: 0 0 15px rgba(79, 140, 255, 0.4); letter-spacing: -1px; }
+
+        /* LISTA DE PLANOS */
+        .plans-list { 
             display: flex; 
             flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 5px;
-            padding: 8px 0;
-            border-radius: 15px;
-            transition: 0.3s;
-            margin: 0 5px;
+            gap: 25px; 
+            padding: 0 20px;
         }
-        .nav-item i { font-size: 1.3rem; }
+
+        /* PLAN CARDS */
+        .plan-card {
+            background: var(--bg-card); 
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px; 
+            padding: 35px 25px 25px; 
+            display: flex; flex-direction: column; align-items: center; text-align: center; 
+            position: relative; overflow: hidden;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideUp 0.8s ease-out backwards;
+        }
+        .plan-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 40px rgba(79, 140, 255, 0.15);
+            border-color: rgba(79, 140, 255, 0.3);
+        }
+
+        /* TAG DURAÇÃO */
+        .duration-tag {
+            position: absolute; top: 0; right: 0; 
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            font-size: 0.7rem; font-weight: 800; padding: 8px 20px;
+            border-bottom-left-radius: 20px; text-transform: uppercase;
+            box-shadow: -5px 5px 15px rgba(79, 140, 255, 0.2);
+            color: #fff;
+        }
+
+        /* TÍTULO & VALOR DO PLANO */
+        .plan-card h3 { 
+            font-size: 1rem; color: var(--text); margin-bottom: 5px; 
+            letter-spacing: 1px; font-weight: 800; 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .plan-card h3 i { color: var(--primary); text-shadow: 0 0 10px rgba(79, 140, 255, 0.5); }
+        .min-invest { font-size: 0.7rem; color: var(--text-soft); text-transform: uppercase; margin-bottom: 15px; font-weight: 600; }
+        .plan-card .price { font-size: 3rem; font-weight: 900; color: #fff; margin-bottom: 25px; letter-spacing: -1.5px; }
+
+        /* GRID DE INFORMAÇÕES */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 15px; margin-bottom: 25px; }
+        .info-item { 
+            background: #0f172a; 
+            padding: 15px 10px; 
+            border-radius: 16px; 
+            border: 1px solid rgba(255,255,255,0.03); 
+            transition: 0.3s;
+        }
+        .plan-card:hover .info-item { border-color: rgba(255,255,255,0.1); }
+        .info-item span { font-size: 0.65rem; color: var(--text-soft); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 6px; }
+        .info-item strong { font-size: 1.1rem; color: #fff; font-weight: 800; }
+
+        /* RETORNO TOTAL */
+        .total-box { 
+            width: 100%; 
+            background: rgba(34, 197, 94, 0.08); 
+            border: 1px solid rgba(34, 197, 94, 0.2); 
+            padding: 18px; 
+            border-radius: 16px; 
+            margin-bottom: 25px; 
+            transition: 0.3s;
+        }
+        .total-box span { font-size: 0.7rem; color: var(--success); text-transform: uppercase; font-weight: 800; display: block; letter-spacing: 0.5px; }
+        .total-box strong { font-size: 1.4rem; color: var(--success); display: block; margin-top: 4px; font-weight: 900; }
+
+        /* BOTÕES */
+        .btn-buy { 
+            background: linear-gradient(135deg, var(--primary), var(--accent)); 
+            color: white; border: none; padding: 18px; border-radius: 16px; 
+            font-weight: 800; cursor: pointer; width: 100%; font-size: 1rem; 
+            text-transform: uppercase; letter-spacing: 1px; 
+            box-shadow: 0 8px 20px rgba(79, 140, 255, 0.25); 
+            transition: 0.3s all cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .btn-buy:not(.btn-disabled):hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 25px rgba(79, 140, 255, 0.4);
+        }
+        .btn-disabled { 
+            background: #2a3143 !important; 
+            color: var(--text-soft) !important; 
+            cursor: not-allowed !important; 
+            box-shadow: none !important; 
+        }
+
+        /* NAV BOTTOM PREMIUM */
+        .nav-bottom { 
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: rgba(18, 24, 38, 0.85); 
+            display: flex; justify-content: space-around; padding: 10px 15px; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            backdrop-filter: blur(15px);
+            z-index: 10000; height: 85px; align-items: center;
+        }
+        .nav-item { 
+            color: var(--text-soft); text-align: center; text-decoration: none; 
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            gap: 6px; padding: 10px 0; border-radius: 16px; transition: 0.3s; margin: 0 5px;
+            font-weight: 600;
+        }
+        .nav-item i { font-size: 1.3rem; transition: 0.3s; }
         .nav-item span { font-size: 0.7rem; }
 
-        /* ITEM ATIVO: EFEITO VIDRO VERMELHO */
+        /* ITEM ATIVO: AZUL GLOW */
         .nav-item.active { 
             color: #fff; 
-            background: rgba(231, 76, 60, 0.2); 
-            border: 1px solid rgba(231, 76, 60, 0.4);
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+            background: rgba(79, 140, 255, 0.15); 
+            border: 1px solid rgba(79, 140, 255, 0.3);
+            box-shadow: 0 0 20px rgba(79, 140, 255, 0.15);
         }
-        .nav-item.active i { color: var(--red); }
+        .nav-item.active i { color: var(--primary); transform: scale(1.1); text-shadow: 0 0 10px rgba(79, 140, 255, 0.4); }
 
     </style>
 </head>
@@ -126,21 +209,23 @@
 
     <div class="header">
         <h2><span>Nexus</span>Invest</h2>
-        <p>Escolha o melhor plano para você</p>
+        <p>Potencialize seus resultados com nossos planos.</p>
     </div>
 
-    <div class="balance-card">
-        <small>Saldo para Investimento (Depósitos)</small>
-        <div id="user-balance">R$ 0,00</div>
+    <div class="balance-container">
+        <div class="balance-card">
+            <small>Saldo Disponível para Aporte</small>
+            <div id="user-balance">R$ 0,00</div>
+        </div>
     </div>
 
     <div id="container-planos" class="plans-list"></div>
 
     <nav class="nav-bottom">
-        <a href="home.html" class="nav-item"><i class="fas fa-home"></i>Início</a>
-        <a href="planos.html" class="nav-item active"><i class="fas fa-chart-pie"></i>Planos</a>
-        <a href="indicacao.html" class="nav-item"><i class="fas fa-share-alt"></i>Indicar</a>
-        <a href="perfil.html" class="nav-item"><i class="fas fa-user-alt"></i>Perfil</a>
+        <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>Início</span></a>
+        <a href="planos.html" class="nav-item active"><i class="fas fa-chart-pie"></i><span>Planos</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="fas fa-share-alt"></i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item"><i class="fas fa-user-alt"></i><span>Perfil</span></a>
     </nav>
 
   <script type="module">
@@ -193,7 +278,6 @@
             const snap = await getDoc(doc(db, "usuarios", uidUsuario));
             if (snap.exists()) {
                 const dados = snap.data();
-                // Verifica 'saldo' ou 'balance' caso você tenha mudado o nome no banco
                 saldoAtual = Number(dados.saldo || dados.balance) || 0;
                 document.getElementById('user-balance').innerText = `R$ ${saldoAtual.toFixed(2).replace('.', ',')}`;
             }
@@ -250,11 +334,15 @@
 
     function gerarPlanos() {
         const container = document.getElementById('container-planos');
-        container.innerHTML = listaPlanos.map(p => `
-            <div class="plan-card">
+        container.innerHTML = listaPlanos.map((p, index) => {
+            const isVip = p.valor >= 1000;
+            const icon = isVip ? '<i class="fas fa-crown" style="color: var(--gold);"></i>' : '<i class="fas fa-bolt"></i>';
+            
+            return `
+            <div class="plan-card" style="animation-delay: ${index * 0.1}s">
                 <div class="duration-tag">Ciclo: ${p.dias} Dias</div>
-                <h3>PLANO ${p.nome}</h3>
-                <p class="min-invest">Investimento</p>
+                <h3>${icon} PLANO ${p.nome}</h3>
+                <p class="min-invest">Aporte Único</p>
                 <div class="price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
                 <div class="info-grid">
                     <div class="info-item">
@@ -263,18 +351,19 @@
                     </div>
                     <div class="info-item">
                         <span>Duração</span>
-                        <strong style="color:var(--gold)">${p.dias} dias</strong>
+                        <strong style="color:var(--secondary)">${p.dias} dias</strong>
                     </div>
                 </div>
                 <div class="total-box">
-                    <span>Retorno Total</span>
+                    <span>Retorno Total Estimado</span>
                     <strong>R$ ${p.total.toFixed(2).replace('.', ',')}</strong>
                 </div>
                 <button class="${p.ativo ? 'btn-buy' : 'btn-buy btn-disabled'}" 
                     onclick="${p.ativo ? `comprarPlano('${p.nome}', ${p.valor}, ${p.diario}, ${p.dias})` : ''}">
                     ${p.ativo ? 'Ativar Agora' : 'Em Breve'}
                 </button>
-            </div>`).join('');
+            </div>`
+        }).join('');
     }
 
     async function processarComissoesRede(valorPlano) {
@@ -293,7 +382,6 @@
 
             for (let i = 0; i < rede.length; i++) {
                 const indicanteId = rede[i].id;
-                // CORREÇÃO: Verifica se o ID existe e não é vazio antes de criar o doc()
                 if (indicanteId && indicanteId.trim() !== "") {
                     let porcentagem = rede[i].pct;
                     
@@ -334,7 +422,8 @@
                     icon: 'error', 
                     title: 'Saldo insuficiente', 
                     text: 'Você precisa de saldo de depósito para ativar planos.',
-                    background: '#1a0505', color: '#fff' 
+                    background: '#121826', color: '#ffffff',
+                    confirmButtonColor: '#4f8cff'
                 });
             }
 
@@ -343,11 +432,11 @@
                 text: `Deseja ativar o plano ${nome} por R$ ${valor.toFixed(2).replace('.', ',')}?`,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#2ecc71',
-                cancelButtonColor: '#e74c3c',
+                confirmButtonColor: '#4f8cff',
+                cancelButtonColor: '#2a3143',
                 confirmButtonText: 'Sim, Ativar!',
                 cancelButtonText: 'Cancelar',
-                background: '#1a0505', color: '#fff'
+                background: '#121826', color: '#ffffff'
             });
 
             if (confirm.isConfirmed) {
@@ -355,13 +444,12 @@
                     title: 'Processando...', 
                     allowOutsideClick: false, 
                     didOpen: () => Swal.showLoading(), 
-                    background: '#1a0505', color: '#fff' 
+                    background: '#121826', color: '#ffffff' 
                 });
 
                 const dataExp = new Date();
                 dataExp.setDate(dataExp.getDate() + dias);
 
-                // 1. REGISTRA O INVESTIMENTO
                 await addDoc(collection(db, "investimentos"), {
                     userId: uidUsuario,
                     plano: nome,
@@ -373,7 +461,6 @@
                     ultimoPagamento: Timestamp.now()
                 });
 
-                // 2. DESCONTA O SALDO (Tenta os dois nomes de campo comuns)
                 const userRef = doc(db, "usuarios", uidUsuario);
                 const userSnap = await getDoc(userRef);
                 const campoSaldo = userSnap.data().balance !== undefined ? "balance" : "saldo";
@@ -382,7 +469,6 @@
                     [campoSaldo]: increment(-valor) 
                 });
 
-                // 3. HISTÓRICO
                 await addDoc(collection(db, "historico"), {
                     userId: uidUsuario,
                     valor: -valor, 
@@ -391,7 +477,6 @@
                     data: Timestamp.now()
                 });
 
-                // 4. BÔNUS DE REDE (Dentro de um try/catch isolado para não travar a compra)
                 try {
                     await processarComissoesRede(valor);
                 } catch (errRede) {
@@ -404,7 +489,7 @@
                     text: 'Seu rendimento começará em 24h.', 
                     timer: 2000, 
                     showConfirmButton: false, 
-                    background: '#1a0505', color: '#fff' 
+                    background: '#121826', color: '#ffffff' 
                 });
 
                 window.location.href = "home.html";
@@ -415,7 +500,8 @@
                 icon: 'error', 
                 title: 'Falha na Ativação', 
                 text: 'Houve um erro técnico. Verifique seu saldo e tente novamente.', 
-                background: '#1a0505', color: '#fff' 
+                background: '#121826', color: '#ffffff',
+                confirmButtonColor: '#4f8cff'
             });
         }
     };
