@@ -26,7 +26,6 @@
             margin: 0; padding: 0; box-sizing: border-box; 
             font-family: 'Inter', sans-serif; 
             -webkit-tap-highlight-color: transparent;
-            scroll-behavior: smooth;
         }
 
         body { 
@@ -43,7 +42,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* HEADER MODERNO */
+        /* HEADER */
         .header {
             padding: 25px 20px;
             display: flex;
@@ -76,7 +75,7 @@
             padding: 10px; border-radius: 12px;
         }
 
-        /* SUPER CARD DE SALDO */
+        /* CARD DE SALDO */
         .main-container { padding: 20px; }
 
         .balance-super-card {
@@ -90,10 +89,12 @@
             margin-bottom: 25px;
         }
 
+        /* pointer-events: none para não bloquear o clique nos botões */
         .balance-super-card::before {
             content: ''; position: absolute; top: -50%; left: -50%;
             width: 200%; height: 200%;
             background: radial-gradient(circle, rgba(91,140,255,0.1) 0%, transparent 70%);
+            pointer-events: none; 
         }
 
         .balance-label { color: var(--text-soft); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;}
@@ -108,11 +109,13 @@
             display: flex; flex-direction: column; align-items: center; gap: 8px;
             font-size: 0.75rem; font-weight: 600;
             transition: 0.3s;
+            position: relative;
+            z-index: 5; /* Garante que fique acima do brilho de fundo */
         }
         .action-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
         .action-btn i { font-size: 1.2rem; color: var(--primary); }
 
-        /* CHECK-IN DIÁRIO */
+        /* CHECK-IN */
         .checkin-card {
             background: var(--card);
             border-radius: var(--radius);
@@ -132,7 +135,7 @@
             cursor: pointer;
         }
 
-        /* SEÇÕES DE TÍTULO */
+        /* SEÇÕES */
         .section-title {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 15px; padding: 0 5px;
@@ -140,7 +143,7 @@
         .section-title h3 { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .section-title i { color: var(--primary); }
 
-        /* LISTA DE INVESTIMENTOS */
+        /* INVESTIMENTOS */
         #lista-investimentos { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
         .invest-card {
             background: var(--card);
@@ -157,16 +160,14 @@
         .status-ativo { background: rgba(34, 197, 94, 0.15); color: var(--success); }
         .status-finalizado { background: rgba(148, 163, 184, 0.1); color: var(--text-soft); }
 
-        /* ATIVIDADE RECENTE (TIMELINE) */
+        /* TIMELINE */
         .activity-timeline {
             background: var(--card);
             border-radius: var(--radius);
             padding: 20px; border: 1px solid var(--glass-border);
         }
         #historico-atividades { display: flex; flex-direction: column; gap: 20px; position: relative; }
-        .activity-item {
-            display: flex; gap: 15px; position: relative;
-        }
+        .activity-item { display: flex; gap: 15px; position: relative; }
         .activity-icon {
             width: 35px; height: 35px; border-radius: 10px;
             background: var(--glass);
@@ -175,7 +176,7 @@
         .activity-content h5 { font-size: 0.9rem; margin-bottom: 2px; }
         .activity-content p { font-size: 0.75rem; color: var(--text-soft); }
 
-        /* NAVBAR INFERIOR */
+        /* NAV BOTTOM */
         .nav-bottom {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: rgba(11, 18, 32, 0.95);
@@ -192,7 +193,6 @@
         }
         .nav-item i { font-size: 1.4rem; }
         .nav-item.active { color: var(--primary); }
-        .nav-item.active i { text-shadow: 0 0 15px var(--primary); }
 
     </style>
 </head>
@@ -202,7 +202,7 @@
         <div class="user-info">
             <div class="avatar" id="user-initials">U</div>
             <div class="welcome-text">
-                <h2 id="greeting">Boa tarde,</h2>
+                <h2 id="greeting">Olá,</h2>
                 <p id="user-name">Carregando...</p>
             </div>
         </div>
@@ -226,7 +226,7 @@
                     <i class="fas fa-wallet"></i>
                     <span>Sacar</span>
                 </a>
-                <a href="#lista-investimentos" class="action-btn">
+                <a href="planos.html" class="action-btn">
                     <i class="fas fa-chart-line"></i>
                     <span>Investir</span>
                 </a>
@@ -262,16 +262,15 @@
         <div class="section-title slide-up" style="animation-delay: 0.3s;">
             <h3><i class="fas fa-chart-pie"></i> Seus Investimentos</h3>
         </div>
-        <div id="lista-investimentos" class="slide-up" style="animation-delay: 0.3s;">
-            <p style="color: var(--text-soft); font-size: 0.8rem; text-align: center; padding: 20px;">Nenhum investimento ativo no momento.</p>
+        <div id="lista-investimentos" class="slide-up">
+            <p style="color: var(--text-soft); font-size: 0.8rem; text-align: center; padding: 20px;">Carregando...</p>
         </div>
 
         <div class="section-title slide-up" style="animation-delay: 0.4s;">
             <h3><i class="fas fa-history"></i> Atividade Recente</h3>
         </div>
-        <div class="activity-timeline slide-up" style="animation-delay: 0.4s;">
-            <div id="historico-atividades">
-                </div>
+        <div class="activity-timeline slide-up">
+            <div id="historico-atividades"></div>
         </div>
 
     </main>
@@ -313,57 +312,38 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Saudação Dinâmica
-        function updateGreeting() {
-            const hour = new Date().getHours();
-            const g = document.getElementById('greeting');
-            if (hour < 12) g.innerText = "Bom dia,";
-            else if (hour < 18) g.innerText = "Boa tarde,";
-            else g.innerText = "Boa noite,";
-        }
-        updateGreeting();
-
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userRef = doc(db, "usuarios", user.uid);
                 const snap = await getDoc(userRef);
-                
                 if (snap.exists()) {
                     const data = snap.data();
                     document.getElementById('user-name').innerText = data.nome || "Investidor";
                     document.getElementById('user-initials').innerText = (data.nome || "U").charAt(0).toUpperCase();
-                    
                     const saldo = data.saldo || data.balance || 0;
                     document.getElementById('user-balance').innerText = `R$ ${saldo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
                     document.getElementById('checkin-streak').innerText = data.checkInStreak || 0;
                 }
-
                 carregarInvestimentos(user.uid);
                 carregarAtividades(user.uid);
-            } else {
-                window.location.href = "login.html";
-            }
+            } else { window.location.href = "login.html"; }
         });
 
         async function carregarInvestimentos(uid) {
             const q = query(collection(db, "investimentos"), where("userId", "==", uid));
             const snap = await getDocs(q);
             const container = document.getElementById('lista-investimentos');
-            
-            if (!snap.empty) container.innerHTML = "";
-            
+            container.innerHTML = snap.empty ? `<p style="color:var(--text-soft); font-size:0.8rem; text-align:center; padding:20px;">Sem investimentos ativos.</p>` : "";
             snap.forEach(doc => {
                 const inv = doc.data();
-                const statusClass = inv.status === 'ativo' ? 'status-ativo' : 'status-finalizado';
                 container.innerHTML += `
                     <div class="invest-card">
                         <div class="invest-details">
                             <h4>Plano ${inv.plano}</h4>
-                            <p>Rendimento: R$ ${inv.rendimentoDiario.toFixed(2)}/dia</p>
+                            <p>Diário: R$ ${inv.rendimentoDiario.toFixed(2)}</p>
                         </div>
-                        <span class="status-badge ${statusClass}">${inv.status}</span>
-                    </div>
-                `;
+                        <span class="status-badge ${inv.status === 'ativo' ? 'status-ativo' : 'status-finalizado'}">${inv.status}</span>
+                    </div>`;
             });
         }
 
@@ -371,71 +351,35 @@
             const q = query(collection(db, "historico"), where("userId", "==", uid), orderBy("data", "desc"), limit(5));
             const snap = await getDocs(q);
             const container = document.getElementById('historico-atividades');
-            
-            if (snap.empty) {
-                container.innerHTML = `<p style="color:var(--text-soft); font-size:0.8rem; text-align:center;">Sem atividades recentes.</p>`;
-                return;
-            }
-
-            container.innerHTML = "";
+            container.innerHTML = snap.empty ? `<p style="color:var(--text-soft); font-size:0.8rem; text-align:center;">Sem histórico.</p>` : "";
             snap.forEach(doc => {
                 const act = doc.data();
-                const icon = act.tipo === 'Rendimento' ? 'fa-chart-line' : (act.valor < 0 ? 'fa-arrow-up' : 'fa-arrow-down');
-                const color = act.valor > 0 ? 'var(--success)' : '#ef4444';
-
                 container.innerHTML += `
                     <div class="activity-item">
-                        <div class="activity-icon"><i class="fas ${icon}"></i></div>
+                        <div class="activity-icon"><i class="fas fa-wallet"></i></div>
                         <div class="activity-content">
                             <h5>${act.tipo}</h5>
-                            <p>${act.descricao}</p>
-                            <small style="color:${color}; font-weight:bold;">${act.valor > 0 ? '+' : ''} R$ ${Math.abs(act.valor).toFixed(2)}</small>
+                            <small style="color:${act.valor > 0 ? 'var(--success)' : '#ef4444'};">R$ ${act.valor.toFixed(2)}</small>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
-        // Lógica de Check-in Progressiva: 0.50 e aumenta a cada 5 dias
         window.coletarBonusDiario = async () => {
             const user = auth.currentUser;
             if (!user) return;
-
             try {
                 const userRef = doc(db, "usuarios", user.uid);
                 const userSnap = await getDoc(userRef);
                 const data = userSnap.data();
-
                 const streak = data.checkInStreak || 0;
-                // Bônus: 0.50 base + 0.50 extra a cada 5 dias de sequência
                 const bonus = 0.50 + (Math.floor(streak / 5) * 0.50);
 
-                await updateDoc(userRef, {
-                    saldo: increment(bonus),
-                    checkInStreak: increment(1)
-                });
+                await updateDoc(userRef, { saldo: increment(bonus), checkInStreak: increment(1) });
+                await addDoc(collection(db, "historico"), { userId: user.uid, tipo: "Check-in", valor: bonus, data: Timestamp.now() });
 
-                await addDoc(collection(db, "historico"), {
-                    userId: user.uid,
-                    tipo: "Check-in",
-                    valor: bonus,
-                    descricao: `Bônus diário - Sequência ${streak + 1} dias`,
-                    data: Timestamp.now()
-                });
-
-                Swal.fire({
-                    title: 'Check-in Realizado!',
-                    text: `Você ganhou R$ ${bonus.toFixed(2)} de bônus!`,
-                    icon: 'success',
-                    background: '#111827',
-                    color: '#fff',
-                    confirmButtonColor: '#5b8cff'
-                }).then(() => {
-                    location.reload();
-                });
-            } catch (error) {
-                console.error("Erro no check-in:", error);
-            }
+                Swal.fire({ title: 'Check-in!', text: `Ganhou R$ ${bonus.toFixed(2)}`, icon: 'success', background: '#111827', color: '#fff' }).then(() => location.reload());
+            } catch (error) { console.error(error); }
         };
 
     </script>
