@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Nexus</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
             --bg-dark: #070202;
-            --card-glass: rgba(15, 8, 8, 0.7);
+            --card-glass: rgba(15, 8, 8, 0.75);
             --red-glow: #ff3838;
             --red-dark: #b31111;
-            --input-bg: rgba(0, 0, 0, 0.5);
+            --input-bg: rgba(0, 0, 0, 0.6);
+            --text-gray: #8a8a93;
         }
 
         * { 
@@ -37,31 +38,38 @@
             overflow: hidden;
         }
 
-        /* Orbes de Luz decorativos ao fundo para dar profundidade real */
+        /* Orbes de Luz decorativos ao fundo */
         .glowing-orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(120px);
+            filter: blur(130px);
             z-index: 1;
-            opacity: 0.25;
+            opacity: 0.22;
+            pointer-events: none;
         }
-        .orb-1 { top: -10%; left: -10%; width: 350px; height: 350px; background: var(--red-glow); }
-        .orb-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #0052cc; }
+        .orb-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--red-glow); }
+        .orb-2 { bottom: -10%; right: -10%; width: 450px; height: 450px; background: #0052cc; }
 
         .login-wrapper {
             position: relative;
             z-index: 2;
             width: 100%;
             max-width: 410px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-card {
             background: var(--card-glass);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            padding: 45px 35px;
-            border-radius: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            padding: 50px 35px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             text-align: center;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.05);
         }
@@ -71,43 +79,52 @@
         }
 
         .logo {
-            font-size: 2.4rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: white;
             letter-spacing: -1.5px;
             display: inline-block;
         }
 
-        .logo span { color: var(--red-glow); text-shadow: 0 0 20px rgba(255, 56, 56, 0.4); }
+        .logo span { color: var(--red-glow); text-shadow: 0 0 25px rgba(255, 56, 56, 0.45); }
         
         .login-card p { 
-            color: #8a8a93; 
-            font-size: 0.85rem; 
-            margin-top: 6px;
-            letter-spacing: 0.3px;
+            color: var(--text-gray); 
+            font-size: 0.88rem; 
+            margin-top: 10px;
+            line-height: 1.4;
+            letter-spacing: 0.2px;
         }
 
         .input-container {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             position: relative;
         }
 
-        .input-container i {
+        .input-container i.input-icon {
             position: absolute;
-            right: 20px;
+            right: 22px;
             top: 50%;
             transform: translateY(-50%);
             color: #4c4c54;
-            font-size: 1rem;
-            transition: color 0.3s;
-            pointer-events: none;
+            font-size: 1.05rem;
+            transition: color 0.3s, cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Ajuste específico para o ícone interativo de ver senha */
+        .input-container i.btn-toggle-password {
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .input-container i.btn-toggle-password:hover {
+            color: #8a8a93;
         }
 
         input {
             width: 100%;
-            padding: 18px 50px 18px 22px;
+            padding: 18px 55px 18px 22px;
             background: var(--input-bg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 16px;
             color: white;
             font-size: 0.95rem;
@@ -118,11 +135,11 @@
 
         input:focus { 
             border-color: rgba(255, 56, 56, 0.5); 
-            background: rgba(10, 3, 3, 0.8);
-            box-shadow: 0 0 20px rgba(255, 56, 56, 0.1), inset 0 1px 0 rgba(255,255,255,0.02);
+            background: rgba(10, 3, 3, 0.85);
+            box-shadow: 0 0 25px rgba(255, 56, 56, 0.12), inset 0 1px 0 rgba(255,255,255,0.02);
         }
         
-        input:focus + i {
+        input:focus ~ i.input-icon {
             color: var(--red-glow);
         }
 
@@ -137,19 +154,24 @@
             font-size: 0.95rem;
             cursor: pointer;
             margin-top: 15px;
-            transition: all 0.3s;
-            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            letter-spacing: 0.5px;
         }
 
+        .btn-modern-submit:hover {
+            opacity: 0.95;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.35);
+        }
         .btn-modern-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-modern-submit:active { transform: scale(0.99); }
+        .btn-modern-submit:active { transform: scale(0.98); }
 
         .footer-action { 
-            margin-top: 30px; 
+            margin-top: 32px; 
             font-size: 0.85rem; 
             color: #6c6c74;
         }
@@ -159,9 +181,12 @@
             font-weight: 600;
             border-bottom: 1px dashed var(--red-glow);
             padding-bottom: 2px;
-            transition: color 0.2s;
+            transition: color 0.2s, border-color 0.2s;
         }
-        .footer-action a:hover { color: var(--red-glow); }
+        .footer-action a:hover { 
+            color: var(--red-glow);
+            border-bottom-style: solid;
+        }
     </style>
 </head>
 <body>
@@ -178,12 +203,12 @@
 
             <div class="input-container">
                 <input type="email" id="email" placeholder="Endereço de e-mail">
-                <i class="fas fa-envelope"></i>
+                <i class="fas fa-envelope input-icon"></i>
             </div>
 
             <div class="input-container">
                 <input type="password" id="password" placeholder="Senha de acesso">
-                <i class="fas fa-lock"></i>
+                <i class="fas fa-lock input-icon btn-toggle-password" id="togglePassword"></i>
             </div>
 
             <button class="btn-modern-submit" id="btnLogin">
@@ -212,6 +237,20 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+
+        // Lógica de alternar visibilidade da senha
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            // Alterna o tipo do input
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Alterna a classe do ícone
+            this.classList.toggle('fa-lock');
+            this.classList.toggle('fa-eye');
+        });
 
         document.getElementById('btnLogin').addEventListener('click', async () => {
             const email = document.getElementById('email').value.trim();
