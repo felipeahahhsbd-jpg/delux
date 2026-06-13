@@ -25,6 +25,10 @@
             /* Cores das Patentes */
             --rank-novato: #a1a1aa;
             --rank-bronze: #cd7f32;
+            --rank-prata: #e2e8f0;
+            --rank-ouro: #ffd700;
+            --rank-platina: #00e676;
+            --rank-diamante: #00d2ff;
             --rank-embaixador: #00d2ff;
             --rank-tita: #ffd700;
         }
@@ -212,7 +216,7 @@
             border-radius: 24px;
             padding: 22px;
             border: 1px solid rgba(0, 210, 255, 0.15);
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
@@ -267,6 +271,96 @@
             box-shadow: 0 4px 12px rgba(0, 210, 255, 0.25);
         }
         .btn-vault-action:active { transform: scale(0.96); }
+
+        /* NOVO BOTÃO DO SISTEMA DE METAS */
+        .goals-system-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.03) 0%, rgba(255, 215, 0, 0.01) 100%);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .goals-system-card:active { transform: scale(0.98); background: rgba(255, 215, 0, 0.06); }
+        .goals-header { display: flex; align-items: center; gap: 15px; }
+        .goals-icon-box {
+            width: 44px; height: 44px; background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--rank-ouro); font-size: 1.2rem;
+        }
+
+        /* TELA MODAL DO SISTEMA DE METAS & RANKING */
+        .metas-screen-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #020408; z-index: 20000; padding: 20px;
+            overflow-y: auto; display: none; padding-bottom: 40px;
+        }
+        .metas-screen-header {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 25px;
+        }
+        .btn-back-profile {
+            width: 40px; height: 40px; border-radius: 12px; background: var(--card-glass);
+            border: 1px solid var(--card-border); color: white; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+        }
+
+        /* NAVEGAÇÃO DE ABAS INTERNAS */
+        .metas-tabs-nav {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            background: rgba(255,255,255,0.02); padding: 5px; border-radius: 14px;
+            border: 1px solid var(--card-border); margin-bottom: 25px;
+        }
+        .tab-btn {
+            padding: 12px; border: none; background: none; color: var(--text-muted);
+            font-weight: 700; font-size: 0.85rem; border-radius: 10px; cursor: pointer;
+            transition: 0.2s; text-align: center;
+        }
+        .tab-btn.active { background: var(--blue-primary); color: white; box-shadow: 0 4px 12px var(--blue-glow); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* LISTA DE METAS / PATENTES */
+        .meta-reward-card {
+            background: var(--card-glass); border: 1px solid var(--card-border);
+            border-radius: 20px; padding: 18px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .meta-info-side { display: flex; align-items: center; gap: 15px; }
+        .meta-badge-icon {
+            width: 42px; height: 42px; border-radius: 12px; display: flex;
+            align-items: center; justify-content: center; font-size: 1.1rem;
+        }
+        .meta-details h4 { font-size: 0.95rem; font-weight: 700; }
+        .meta-details p { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+        .meta-details span { font-size: 0.75rem; font-weight: 700; color: var(--green-success); display: block; margin-top: 4px; }
+        
+        .btn-claim-reward {
+            padding: 8px 14px; border-radius: 10px; border: none; font-size: 0.75rem;
+            font-weight: 700; cursor: pointer; color: white; background: var(--blue-primary);
+        }
+        .btn-claim-reward:disabled { background: rgba(255,255,255,0.05); color: var(--text-muted); cursor: not-allowed; }
+        .btn-claim-reward.claimed { background: rgba(0, 230, 118, 0.1); color: var(--green-success); border: 1px solid rgba(0, 230, 118, 0.2); }
+
+        /* LAYOUT DO RANKING */
+        .ranking-list-box { background: var(--card-glass); border: 1px solid var(--card-border); border-radius: 20px; overflow: hidden; }
+        .ranking-row {
+            display: flex; align-items: center; padding: 15px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.03); justify-content: space-between;
+        }
+        .ranking-row:last-child { border-bottom: none; }
+        .rank-position { font-weight: 800; font-size: 0.9rem; width: 30px; color: var(--text-muted); }
+        .ranking-row:nth-child(1) .rank-position { color: #ffd700; font-size: 1.1rem; }
+        .ranking-row:nth-child(2) .rank-position { color: #e2e8f0; font-size: 1.05rem; }
+        .ranking-row:nth-child(3) .rank-position { color: #cd7f32; font-size: 1rem; }
+        .rank-user-name { font-weight: 600; font-size: 0.9rem; flex-grow: 1; text-transform: capitalize; }
+        .rank-user-val { font-weight: 800; font-size: 0.9rem; color: var(--cyan-neon); }
 
         /* CATEGORIAS EM CÁPSULAS MODULARES */
         .menu-category-title {
@@ -361,7 +455,6 @@
         }
         .btn-logout-danger:active { background: rgba(255, 75, 92, 0.08); transform: scale(0.98); }
 
-        /* Animações nativas extras */
         @keyframes pulse-neon {
             0%, 100% { box-shadow: 0 0 5px rgba(0, 210, 255, 0.2); }
             50% { box-shadow: 0 0 15px rgba(0, 210, 255, 0.5); }
@@ -432,6 +525,18 @@
         </div>
     </div>
 
+    <!-- NOVO COMPONENTE: BOTÃO DO SISTEMA DE METAS & PATENTES -->
+    <div class="goals-system-card animate__animated animate__fadeInDown" style="animation-delay: 0.14s;" id="btn-trigger-metas">
+        <div class="goals-header">
+            <div class="goals-icon-box"><i class="fas fa-trophy"></i></div>
+            <div>
+                <h3 style="font-size: 1rem; font-weight: 700;">Metas & Patentes</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Complete convites, ganhe bônus e veja o Ranking</p>
+            </div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: var(--text-muted); font-size: 0.85rem;"></i>
+    </div>
+
     <div class="menu-category-title">Operações Financeiras</div>
     <div class="menu-group-box animate__animated animate__fadeInUp" style="animation-delay: 0.15s;">
         <a href="deposito.html" class="menu-item menu-row-item">
@@ -465,7 +570,35 @@
         </a>
     </div>
 
-    <button class="btn-logout-danger animate__animated animate__fadeInUp" style="animation-delay: 0.25s;" id="btnLogout">Desconectar da Conta</button>
+    <button class="btn-logout-danger animate__animated animate__fadeInUp" style="animation-delay: 0.25s;" idbtnLogout">Desconectar da Conta</button>
+
+    <!-- ABA MODAL DO SISTEMA DE METAS POR CONVITE E RANKING -->
+    <div class="metas-screen-overlay" id="metas-module-screen">
+        <div class="metas-screen-header">
+            <button class="btn-back-profile" id="btn-close-metas"><i class="fas fa-arrow-left"></i></button>
+            <h2 style="font-size: 1.3rem; font-weight: 800;">Central Nexus Carreira<b>.</b></h2>
+        </div>
+
+        <div class="metas-tabs-nav">
+            <button class="tab-btn active" id="tab-trigger-goals">Metas & Patentes</button>
+            <button class="tab-btn" id="tab-trigger-ranking">Ranking Global</button>
+        </div>
+
+        <!-- CONTEÚDO DA ABA DE METAS -->
+        <div class="tab-content active" id="content-goals">
+            <div id="metas-list-container">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </div>
+
+        <!-- CONTEÚDO DA ABA DE RANKING -->
+        <div class="tab-content" id="content-ranking">
+            <p style="font-size:0.75rem; color: var(--text-muted); margin-bottom:15px; padding-left:5px;">Top 10 investidores com maior faturamento da rede:</p>
+            <div class="ranking-list-box" id="ranking-list-container">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+        </div>
+    </div>
 
     <nav class="nav-bottom">
         <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>Início</span></a>
@@ -477,7 +610,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, query, orderBy, limit, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
@@ -494,6 +627,47 @@
 
         let saldoGlobal = 0;
         let currentUserUid = null;
+        let totalIndicadosGlobal = 0;
+        let metasResgatadas = [];
+
+        // Estrutura das metas/patentes solicitadas
+        const configuracaoMetas = [
+            { id: "bronze", nome: "Patente Bronze", convites: 5, premio: 5.00, cor: "var(--rank-bronze)", icone: "fa-medal" },
+            { id: "prata", nome: "Patente Prata", convites: 15, premio: 10.00, cor: "var(--rank-prata)", icone: "fa-award" },
+            { id: "ouro", nome: "Patente Ouro", convites: 30, premio: 20.00, cor: "var(--rank-ouro)", icone: "fa-trophy" },
+            { id: "platina", nome: "Patente Platina", convites: 50, premio: 50.00, cor: "var(--rank-platina)", icone: "fa-crown" },
+            { id: "diamante", nome: "Patente Diamante Imortal", convites: 100, premio: 120.00, cor: "var(--rank-diamante)", icone: "fa-gem" }
+        ];
+
+        // --- CONTROLES DE INTERFACE DO SISTEMA DE METAS (ABAS E MODAL) ---
+        const metasModal = document.getElementById('metas-module-screen');
+        document.getElementById('btn-trigger-metas').addEventListener('click', () => {
+            metasModal.style.display = 'block';
+            carregarDadosMetasERanking();
+        });
+        document.getElementById('btn-close-metas').addEventListener('click', () => {
+            metasModal.style.display = 'none';
+        });
+
+        const tabBtnGoals = document.getElementById('tab-trigger-goals');
+        const tabBtnRanking = document.getElementById('tab-trigger-ranking');
+        const contentGoals = document.getElementById('content-goals');
+        const contentRanking = document.getElementById('content-ranking');
+
+        tabBtnGoals.addEventListener('click', () => {
+            tabBtnGoals.classList.add('active');
+            tabBtnRanking.classList.remove('active');
+            contentGoals.classList.add('active');
+            contentRanking.classList.remove('active');
+        });
+
+        tabBtnRanking.addEventListener('click', () => {
+            tabBtnRanking.classList.add('active');
+            tabBtnGoals.classList.remove('active');
+            contentRanking.classList.add('active');
+            contentGoals.classList.remove('active');
+        });
+
 
         // --- ENGINE DO FEED DE ATIVIDADES LIVE PROOF (FOMO) ---
         const listaNomesFOMO = ["marcos_silva", "julia_resende", "felipe.lucros", "gabriel_nexus", "ana_carol", "rafael_invest", "bruno_b", "amanda_m", "diego_stk"];
@@ -521,7 +695,7 @@
         rodarFeedFOMO();
 
 
-        // --- ENGINE DO PLANO DE CARREIRA ---
+        // --- ENGINE DO PLANO DE CARREIRA LATERAL ---
         function atualizarPatenteCarreira(indicados) {
             const avatar = document.getElementById('user-avatar');
             const badge = document.getElementById('rank-badge');
@@ -545,17 +719,23 @@
                 corRank = "var(--rank-bronze)";
                 iconeRank = '<i class="fas fa-medal"></i>';
                 pct = ((indicados - 5) / 10) * 100;
-                metaTexto = `${indicados} / 15 para Embaixador`;
-            } else if (indicados >= 15 && indicados < 40) {
-                patente = "Embaixador Nexus";
-                corRank = "var(--rank-embaixador)";
-                iconeRank = '<i class="fas fa-crown"></i>';
-                pct = ((indicados - 15) / 25) * 100;
-                metaTexto = `${indicados} / 40 para Titã`;
+                metaTexto = `${indicados} / 15 para Prata`;
+            } else if (indicados >= 15 && indicados < 30) {
+                patente = "Líder Prata";
+                corRank = "var(--rank-prata)";
+                iconeRank = '<i class="fas fa-award"></i>';
+                pct = ((indicados - 15) / 15) * 100;
+                metaTexto = `${indicados} / 30 para Ouro`;
+            } else if (indicados >= 30 && indicados < 50) {
+                patente = "Líder Ouro";
+                corRank = "var(--rank-ouro)";
+                iconeRank = '<i class="fas fa-trophy"></i>';
+                pct = ((indicados - 30) / 20) * 100;
+                metaTexto = `${indicados} / 50 para Platina`;
             } else {
-                patente = "Titã da Rede";
-                corRank = "var(--rank-tita)";
-                iconeRank = '<i class="fas fa-bolt"></i>';
+                patente = "Mestre Diamante";
+                corRank = "var(--rank-diamante)";
+                iconeRank = '<i class="fas fa-gem"></i>';
                 pct = 100;
                 metaTexto = "Nível Máximo Alcançado!";
             }
@@ -573,6 +753,118 @@
             txtProgress.innerText = metaTexto;
             barFill.style.width = `${pct}%`;
         }
+
+        // --- RENDERIZADOR DINÂMICO DO SISTEMA DE METAS & RANKING ---
+        async function carregarDadosMetasERanking() {
+            // Renderizar Abas de Metas
+            const containerMetas = document.getElementById('metas-list-container');
+            containerMetas.innerHTML = "";
+
+            configuracaoMetas.forEach(meta => {
+                const jaResgatado = metasResgatadas.includes(meta.id);
+                const completouMeta = totalIndicadosGlobal >= meta.convites;
+
+                let btnHtml = "";
+                if (jaResgatado) {
+                    btnHtml = `<button class="btn-claim-reward claimed" disabled><i class="fas fa-check-circle"></i> Resgatado</button>`;
+                } else if (completouMeta) {
+                    btnHtml = `<button class="btn-claim-reward" data-id="${meta.id}" data-premio="${meta.premio}" style="background: var(--green-success);">Resgatar R$ ${meta.premio.toFixed(2)}</button>`;
+                } else {
+                    btnHtml = `<button class="btn-claim-reward" disabled>${totalIndicadosGlobal}/${meta.convites}</button>`;
+                }
+
+                const cardMeta = document.createElement('div');
+                cardMeta.className = "meta-reward-card";
+                cardMeta.innerHTML = `
+                    <div class="meta-info-side">
+                        <div class="meta-badge-icon" style="background: rgba(255,255,255,0.02); border: 1px solid ${meta.cor}; color: ${meta.cor};">
+                            <i class="fas ${meta.icone}"></i>
+                        </div>
+                        <div class="meta-details">
+                            <h4>${meta.nome}</h4>
+                            <p>Meta: Convidar ${meta.convites} usuários</p>
+                            <span>Bônus: +R$ ${meta.premio.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    <div>${btnHtml}</div>
+                `;
+                containerMetas.appendChild(cardMeta);
+            });
+
+            // Atribuir eventos de clique para os botões de resgatar ativos
+            document.querySelectorAll('.btn-claim-reward:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const idMeta = e.target.getAttribute('data-id');
+                    const premioMeta = Number(e.target.getAttribute('data-premio'));
+                    await processarResgatePremioMeta(idMeta, premioMeta);
+                });
+            });
+
+            // Renderizar Lista do Ranking Real do Firestore
+            const containerRanking = document.getElementById('ranking-list-container');
+            containerRanking.innerHTML = `<p style="text-align:center; padding:20px; font-size:0.8rem; color:var(--text-muted);">Processando dados da blockchain...</p>`;
+            
+            try {
+                const usuariosRef = collection(db, "usuarios");
+                const q = query(usuariosRef, orderBy("saldoLucro", "desc"), limit(10));
+                const querySnapshot = await getDocs(q);
+                
+                containerRanking.innerHTML = "";
+                let posicao = 1;
+                
+                querySnapshot.forEach((docSnap) => {
+                    const dadosRank = docSnap.data();
+                    const nomeFormatado = dadosRank.nome || "Usuário Anonimo";
+                    const saldoRank = dadosRank.saldoLucro !== undefined ? Number(dadosRank.saldoLucro) : 0;
+
+                    const linhaRank = document.createElement('div');
+                    linhaRank.className = "ranking-row";
+                    linhaRank.innerHTML = `
+                        <div class="rank-position">#${posicao}</div>
+                        <div class="rank-user-name">${nomeFormatado}</div>
+                        <div class="rank-user-val">R$ ${saldoRank.toFixed(2)}</div>
+                    `;
+                    containerRanking.appendChild(linhaRank);
+                    posicao++;
+                });
+            } catch(e) {
+                console.error("Erro ao computar ranking do firestore: ", e);
+                containerRanking.innerHTML = `<p style="text-align:center; padding:20px; font-size:0.8rem; color:var(--red-danger);">Erro ao carregar o ranking.</p>`;
+            }
+        }
+
+        // Processar o resgate no Firebase
+        async function processarResgatePremioMeta(idMeta, valorPremio) {
+            try {
+                const userRef = doc(db, "usuarios", currentUserUid);
+                const novoSaldo = saldoGlobal + valorPremio;
+
+                await updateDoc(userRef, {
+                    saldoLucro: novoSaldo,
+                    metasResgatadas: arrayUnion(idMeta)
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Patente Desbloqueada!',
+                    text: `Você resgatou com sucesso o bônus de R$ ${valorPremio.toFixed(2)} referente a esta meta!`,
+                    background: '#060b19',
+                    color: '#fff',
+                    confirmButtonColor: '#0052ff'
+                });
+
+                // Atualiza estados locais e recarrega views
+                saldoGlobal = novoSaldo;
+                metasResgatadas.push(idMeta);
+                document.getElementById('stat-saldo').innerText = `R$ ${saldoGlobal.toFixed(2)}`;
+                carregarDadosMetasERanking();
+
+            } catch(e) {
+                console.error("Erro ao computar prêmio de meta:", e);
+                Swal.fire({ icon: 'error', title: 'Erro Operacional', text: 'Não foi possível processar seu resgate.', background: '#060b19', color: '#fff' });
+            }
+        }
+
 
         // --- ENGINE DO COFRE FORTE (STAKING) COM REGRESSIVO ---
         function gerenciarCofreInterface(dadosCofre) {
@@ -641,13 +933,12 @@
                     const objetoCofre = {
                         ativo: true,
                         valorTrancado: valorNum,
-                        valorFinal: valorNum * 1.15, // +15% de Rendimento
+                        valorFinal: valorNum * 1.15, 
                         dataFim: new Date().getTime() + seteDiasEmMs
                     };
 
-                    // Atualiza o banco deduzindo o valor do campo correto
                     await updateDoc(userRef, {
-                        saldoLucro: saldoGlobal - valorNum, // Lendo a chave idêntica a do banco
+                        saldoLucro: saldoGlobal - valorNum, 
                         cofreNexus: objetoCofre
                     });
 
@@ -672,17 +963,17 @@
                     if(snap.exists()){
                         const d = snap.data();
                         
-                        // CORREÇÃO: Lendo especificamente "saldoLucro" com base no seu Firestore
                         saldoGlobal = d.saldoLucro !== undefined ? Number(d.saldoLucro) : 0;
+                        totalIndicadosGlobal = d.indicadosCount || 0;
+                        metasResgatadas = d.metasResgatadas || [];
 
                         document.getElementById('display-nome').innerText = d.nome || "Usuário";
                         document.getElementById('stat-saldo').innerText = `R$ ${saldoGlobal.toFixed(2)}`;
                         
-                        const totalIndicados = d.indicadosCount || 0;
-                        document.getElementById('stat-indicados').innerHTML = `<i class="fas fa-users" style="font-size:0.85rem; margin-right:6px; color: var(--cyan-neon);"></i>${totalIndicados}`;
+                        document.getElementById('stat-indicados').innerHTML = `<i class="fas fa-users" style="font-size:0.85rem; margin-right:6px; color: var(--cyan-neon);"></i>${totalIndicadosGlobal}`;
                         
                         // Atualizar Sistemas Modulares
-                        atualizarPatenteCarreira(totalIndicados);
+                        atualizarPatenteCarreira(totalIndicadosGlobal);
                         gerenciarCofreInterface(d.cofreNexus);
                     }
                 } catch (err) {
