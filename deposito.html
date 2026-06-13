@@ -357,7 +357,11 @@
                 for (const change of snapshot.docChanges()) {
                     if (change.type === "added") {
                         const dados = change.doc.data();
-                        const dataFirestore = dados.data.toDate ? dados.data.toDate() : new Date(dados.data);
+                        
+                        // CORREÇÃO: Tratamento seguro caso a propriedade "data" venha nula do banco
+                        const dataFirestore = dados.data 
+                            ? (dados.data.toDate ? dados.data.toDate() : new Date(dados.data)) 
+                            : new Date();
 
                         if (dataFirestore >= horaGeracaoPix) {
                             if (unsubscribeHistorico) unsubscribeHistorico();
