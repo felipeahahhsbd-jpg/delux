@@ -115,11 +115,11 @@
 
         .prize-text {
             font-weight: 800;
-            font-size: 15px;
+            font-size: 14px;
             fill: #ffffff;
             letter-spacing: 0.5px;
         }
-        .prize-text.premium { fill: var(--cyan-neon); font-size: 16px; }
+        .prize-text.premium { fill: var(--cyan-neon); font-size: 15px; }
 
         /* Botão de Ação */
         .action-area { text-align: center; margin-top: 35px; padding: 0 20px; }
@@ -176,34 +176,44 @@
         <svg class="wheel-svg" id="wheel" viewBox="0 0 300 300">
             <circle cx="150" cy="150" r="146" fill="none" stroke="rgba(0, 210, 255, 0.15)" stroke-width="4" />
             
-            <g transform="rotate(270 150 150)">
-                <path d="M 150 150 L 275.56 77.5 A 145 145 0 0 1 275.56 222.5 Z" fill="#0052ff" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" />
-                <text x="215" y="154" class="prize-text premium" transform="rotate(0 215 154)" text-anchor="middle">R$ 10</text>
+            <g transform="rotate(0 150 150)">
+                <path d="M 150 150 L 283.96 94.51 A 145 145 0 0 1 283.96 205.49 Z" fill="#1e293b" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
+                <text x="230" y="155" class="prize-text" text-anchor="middle">Nada</text>
             </g>
 
-            <g transform="rotate(330 150 150)">
-                <path d="M 150 150 L 275.56 77.5 A 145 145 0 0 1 275.56 222.5 Z" fill="#0f172a" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
-                <text x="215" y="154" class="prize-text" transform="rotate(0 215 154)" text-anchor="middle">R$ 1</text>
-            </g>
-
-            <g transform="rotate(30 150 150)">
-                <path d="M 150 150 L 275.56 77.5 A 145 145 0 0 1 275.56 222.5 Z" fill="#1e293b" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
-                <text x="215" y="154" class="prize-text" transform="rotate(0 215 154)" text-anchor="middle">Nada</text>
+            <g transform="rotate(45 150 150)">
+                <path d="M 150 150 L 283.96 94.51 A 145 145 0 0 1 283.96 205.49 Z" fill="#0f172a" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
+                <text x="230" y="155" class="prize-text" text-anchor="middle">R$ 1</text>
             </g>
 
             <g transform="rotate(90 150 150)">
-                <path d="M 150 150 L 275.56 77.5 A 145 145 0 0 1 275.56 222.5 Z" fill="#0f172a" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
-                <text x="215" y="154" class="prize-text" transform="rotate(0 215 154)" text-anchor="middle">R$ 1</text>
+                <path d="M 150 150 L 283.96 94.51 A 145 145 0 0 1 283.96 205.49 Z" fill="#1e293b" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
+                <text x="230" y="155" class="prize-text" text-anchor="middle">R$ 5</text>
             </g>
 
-            <g transform="rotate(150 150 150)">
-                <path d="M 150 150 L 275.56 77.5 A 145 145 0 0 1 275.56 222.5 Z" fill="#1e293b" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
-                <text x="215" y="154" class="prize-text" transform="rotate(0 215 154)" text-anchor="middle">R$ 5</text>
+            <g transform="rotate(135 150 150)">
+                <path d="M 150 150 L 283.96 94.51 A 145 145 0 0 1 283.96 205.49 Z" fill="#0052ff" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" />
+                <text x="230" y="155" class="prize-text premium" text-anchor="middle">R$ 10</text>
             </g>
 
-            <g transform="rotate(210 150 150)">
-                <path d="M 150 150 L 275.56 77.5 A 145 145 0 0 1 275.56 222.5 Z" fill="#0f172a" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
-                <text x="215" y="154" class="prize-text" transform="rotate(0 215 154)" text-anchor="middle">Nada</text>
+            <g transform="rotate(180 150 150)">
+                <path d="M 150 150 L 283.96 94.51 A 145 145 0 0 1 283.96 205.49 Z" fill="#0f172a" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
+                <text x="230" y="155" class="prize-text" text-anchor="middle">R$ 20</text>
+            </g>
+
+            <g transform="rotate(225 150 150)">
+                <path d="M 150 150 L 283.96 94.51 A 145 145 0 0 1 283.96 205.49 Z" fill="#1e293b" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
+                <text x="230" y="155" class="prize-text" text-anchor="middle">R$ 30</text>
+            </g>
+
+            <g transform="rotate(270 150 150)">
+                <path d="M 150 150 L 283.96 94.51 A 145 145 0 0 1 283.96 205.49 Z" fill="#0052ff" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" />
+                <text x="230" y="155" class="prize-text premium" text-anchor="middle">R$ 50</text>
+            </g>
+
+            <g transform="rotate(315 150 150)">
+                <path d="M 150 150 L 283.96 94.51 A 145 145 0 0 1 283.96 205.49 Z" fill="#0f172a" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
+                <text x="230" y="155" class="prize-text" text-anchor="middle">R$ 100</text>
             </g>
 
             <circle cx="150" cy="150" r="24" fill="#090d16" stroke="var(--cyan-neon)" stroke-width="3" />
@@ -225,7 +235,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, setDoc, increment, addDoc, collection, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // ATENÇÃO: Adicionado o "getDoc" na importação abaixo para checagem de saldo segura
+        import { getFirestore, doc, onSnapshot, updateDoc, setDoc, increment, addDoc, collection, Timestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
@@ -245,33 +256,26 @@
         let isSpinning = false;
         let degreesGiroTotal = 0;
 
-        // Mapeamento dos ângulos físicos e dos prêmios na tela
+        // Mapeamento dos ângulos para o SVG de 8 fatias
         const premios = [
-            { valor: 10, anguloCentro: 270 }, // R$ 10
-            { valor: 1,  anguloCentro: 330 }, // R$ 1
-            { valor: 0,  anguloCentro: 30  }, // Nada
-            { valor: 1,  anguloCentro: 90  }, // R$ 1
-            { valor: 5,  anguloCentro: 150 }, // R$ 5
-            { valor: 0,  anguloCentro: 210 }  // Nada
+            { valor: 0,   anguloCentro: 0 },   // Nada
+            { valor: 1,   anguloCentro: 45 },  // R$ 1
+            { valor: 5,   anguloCentro: 90 },  // R$ 5
+            { valor: 10,  anguloCentro: 135 }, // R$ 10
+            { valor: 20,  anguloCentro: 180 }, // R$ 20 (Só visual)
+            { valor: 30,  anguloCentro: 225 }, // R$ 30 (Só visual)
+            { valor: 50,  anguloCentro: 270 }, // R$ 50 (Só visual)
+            { valor: 100, anguloCentro: 315 }  // R$ 100 (Só visual)
         ];
 
-        // LÓGICA DE PROBABILIDADE REFEITA (De acordo com o pedido)
+        // Lógica matemática (os prêmios 20 a 100 tem 0% de chance de serem chamados aqui)
         function puxarPremio() {
             const r = Math.random() * 100;
             
-            // 40% de chance de cair em Nada (Soma das duas fatias de Nada)
-            if (r < 20) return premios[2]; // Nada (Posição 1)
-            if (r < 40) return premios[5]; // Nada (Posição 2)
-            
-            // 40% de chance de cair em R$ 1 (Soma das duas fatias de R$ 1)
-            if (r < 60) return premios[1]; // R$ 1 (Posição 1)
-            if (r < 80) return premios[3]; // R$ 1 (Posição 2)
-            
-            // 18% de chance de cair em R$ 5
-            if (r < 98) return premios[4]; // R$ 5
-            
-            // 2% de chance MUITO BAIXA de cair em R$ 10
-            return premios[0];             // R$ 10
+            if (r < 50) return premios[0]; // 50% de chance de Nada
+            if (r < 90) return premios[1]; // 40% de chance de R$ 1
+            if (r < 99) return premios[2]; // 9% de chance de R$ 5
+            return premios[3];             // 1% de chance de R$ 10 (muito baixo)
         }
 
         const btnSpin = document.getElementById('btn-spin');
@@ -285,7 +289,7 @@
                 onSnapshot(userDocRef, async (snap) => {
                     if (!snap.exists()) {
                         await setDoc(userDocRef, {
-                            girosRoleta: 1, // Sincronizado para usar o campo certo
+                            girosRoleta: 1,
                             saldo: 0,
                             saldoLucro: 0,
                             status: "ativo"
@@ -301,9 +305,6 @@
                     }
 
                     const data = snap.data();
-                    
-                    // CORREÇÃO: Puxando do campo exato que o Firestore está salvando (girosRoleta)
-                    // Adicionei um fallback caso a conta dele seja antiga e use 'giros'
                     girosAtuais = data.girosRoleta !== undefined ? data.girosRoleta : (data.giros || 0);
                     
                     girosDisplay.innerText = girosAtuais;
@@ -324,14 +325,36 @@
         });
 
         btnSpin.addEventListener('click', async () => {
-            if (girosAtuais <= 0 || isSpinning || btnSpin.disabled) return;
+            if (isSpinning || btnSpin.disabled) return;
 
             isSpinning = true;
             btnSpin.disabled = true;
-            btnSpin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Computando...';
+            btnSpin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
 
             try {
-                // CORREÇÃO: Descontando do campo correto no banco antes da roleta parar
+                // SEGURANÇA MÁXIMA: Bloqueio para não ficar negativo!
+                // Aqui nós buscamos ativamente o valor do banco NA HORA DO CLIQUE
+                const docSnap = await getDoc(userDocRef);
+                const dbData = docSnap.exists() ? docSnap.data() : null;
+                const girosReaisDB = dbData ? (dbData.girosRoleta !== undefined ? dbData.girosRoleta : (dbData.giros || 0)) : 0;
+
+                if (girosReaisDB <= 0) {
+                    Swal.fire({
+                        title: 'Aviso!',
+                        text: 'Você não tem giros disponíveis no momento.',
+                        icon: 'warning',
+                        background: '#0f172a',
+                        color: '#fff',
+                        confirmButtonColor: '#0052ff'
+                    });
+                    btnSpin.innerText = "Sem Giros";
+                    isSpinning = false;
+                    return;
+                }
+
+                btnSpin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Computando...';
+
+                // Só agora, tendo certeza, nós descontamos
                 await updateDoc(userDocRef, { girosRoleta: increment(-1) });
 
                 const sorteado = puxarPremio();
@@ -384,6 +407,7 @@
                         });
                     }
                     
+                    // Como a variável onSnapshot cuida do texto, isso aqui é só garantia visual
                     if (girosAtuais > 0) {
                         btnSpin.disabled = false;
                         btnSpin.innerText = "Girar Novamente";
