@@ -209,6 +209,7 @@
         .quests-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .quests-title { font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; color: #fff; }
         .quests-title i { color: var(--cyan-neon); font-size: 1.1rem; }
+        .quest-subheading { font-size: 0.72rem; color: var(--cyan-neon); text-transform: uppercase; font-weight: 700; margin-top: 15px; margin-bottom: 5px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0, 210, 255, 0.1); padding-bottom: 3px;}
         .quest-item {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.04);
@@ -306,7 +307,7 @@
 </head>
 <body>
 
-    <a href="https://t.me/+Z6pv35vKSuA4MDhh" target="_blank" class="btn-tg"><i class="fab fa-telegram-plane"></i></a>
+    <a href="https://t.me/+Z6pv35vKSuA4MDhh" target="_blank" class="btn-tg" id="link-telegram-global"><i class="fab fa-telegram-plane"></i></a>
 
     <div id="social-pop" class="social-pop">
         <i class="fas fa-check-circle" style="color: var(--green-success);"></i>
@@ -376,12 +377,30 @@
         </button>
     </div>
 
+    <!-- CENTRAL DE METAS E MISSÕES -->
     <div class="quests-banner animate__animated animate__zoomIn" style="animation-delay: 0.3s;">
         <div class="quests-header">
-            <div class="quests-title"><i class="fas fa-tasks"></i> Missões de Evolução</div>
-            <div class="vip-badge" style="background: rgba(0, 210, 255, 0.1); color: var(--cyan-neon); border: 1px solid rgba(0,210,255,0.2); box-shadow: none;">Bônus</div>
+            <div class="quests-title"><i class="fas fa-tasks"></i> Central de Metas</div>
+            <div class="vip-badge" style="background: rgba(0, 210, 255, 0.1); color: var(--cyan-neon); border: 1px solid rgba(0,210,255,0.2); box-shadow: none;">Recompensas</div>
         </div>
+        
+        <div class="quest-subheading">⚡ Metas Rápidas (Iniciante)</div>
+        <div id="container-metas-faceis"></div>
+
+        <div class="quest-subheading" style="margin-top: 20px; color: var(--fire); border-color: rgba(255,87,34,0.1);">🚀 Missões de Evolução</div>
         <div id="container-missoes"></div>
+    </div>
+
+    <!-- RECURSO NOVO: SISTEMA DE RANKING GLOBAL -->
+    <div class="quests-banner animate__animated animate__zoomIn" style="animation-delay: 0.4s;">
+        <div class="quests-header">
+            <div class="quests-title"><i class="fas fa-trophy" style="color: var(--gold);"></i> Ranking de Elite</div>
+            <div class="vip-badge" style="background: rgba(255, 215, 0, 0.1); color: var(--gold); border: 1px solid rgba(255,215,0,0.2); box-shadow: none;">Top 5 Lucros</div>
+        </div>
+        <p style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">Veja quem acumulou mais retornos na rede global Nexus.</p>
+        <div id="container-ranking" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+            <p style="text-align:center; color:var(--text-muted); font-size:0.75rem;"><i class="fas fa-spinner fa-spin"></i> Carregando líderes...</p>
+        </div>
     </div>
 
     <h3 style="padding: 0 25px 5px 25px; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Meus Contratos Ativos</h3>
@@ -397,7 +416,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, addDoc, Timestamp, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, addDoc, Timestamp, increment, onSnapshot, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDKDFw7khZzM9hIX7xbbrbFQeESiCLnmOw",
@@ -416,6 +435,11 @@
 
         function formatarMoeda(valor) {
             if (!saldoVisivel) return "R$ ******";
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor || 0);
+        }
+
+        // Função limpa sem ocultar para o ranking global
+        function formatarMoedaRanking(valor) {
             return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor || 0);
         }
 
@@ -474,6 +498,46 @@
             }, 1000);
         }
 
+        // CARREGAR RANKING DE USUÁRIOS COMPATÍVEL COM FIRESTORE
+        async function carregarRankingGlobal() {
+            const container = document.getElementById('container-ranking');
+            if (!container) return;
+            try {
+                const q = query(collection(db, "usuarios"), orderBy("totalGanhos", "desc"), limit(5));
+                const snap = await getDocs(q);
+                let html = '';
+                let posicao = 1;
+
+                snap.forEach(userDoc => {
+                    const uData = userDoc.data();
+                    // Oculta levemente o sobrenome do usuário por privacidade
+                    const primeiroNome = uData.nome ? uData.nome.split(' ')[0] : 'Investidor';
+                    const sobrenomeLetra = uData.nome && uData.nome.split(' ')[1] ? uData.nome.split(' ')[1].charAt(0) + '.' : '';
+                    const nomeExibicao = `${primeiroNome} ${sobrenomeLetra}`;
+
+                    let medalha = `<span style="color: var(--text-muted); font-weight: 700; width: 24px; display:inline-block; text-align:center; font-size:0.8rem;">${posicao}º</span>`;
+                    if (posicao === 1) medalha = `<i class="fas fa-trophy" style="color: var(--gold); width: 24px; text-align:center;"></i>`;
+                    if (posicao === 2) medalha = `<i class="fas fa-trophy" style="color: var(--silver); width: 24px; text-align:center;"></i>`;
+                    if (posicao === 3) medalha = `<i class="fas fa-trophy" style="color: var(--bronze); width: 24px; text-align:center;"></i>`;
+
+                    html += `
+                    <div class="animate__animated animate__fadeIn" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 14px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            ${medalha}
+                            <span style="font-size: 0.82rem; font-weight: 600; color: #fff;">${nomeExibicao}</span>
+                        </div>
+                        <span style="font-size: 0.82rem; font-weight: 700; color: var(--green-success);">${formatarMoedaRanking(uData.totalGanhos || 0)}</span>
+                    </div>`;
+                    posicao++;
+                });
+
+                container.innerHTML = html || '<p style="text-align:center; color:var(--text-muted); font-size:0.75rem;">Nenhum líder registrado.</p>';
+            } catch (e) {
+                console.error("Erro ao montar ranking:", e);
+                container.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.75rem;">Ranking indisponível no momento.</p>';
+            }
+        }
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 onSnapshot(doc(db, "usuarios", user.uid), async (docSnap) => {
@@ -485,7 +549,6 @@
                         }
                         
                         const hoje = getHojeString();
-                        // Reset diário das missões 1 e 2
                         if (userData.ultimaMissaoReset !== hoje) {
                             await updateDoc(doc(db, "usuarios", user.uid), {
                                 missao1Coletada: false,
@@ -497,9 +560,7 @@
 
                         document.getElementById('home-nome').innerText = `Olá, ${userData.nome || "Investidor"}`;
                         
-                        // CORREÇÃO: Puxar a variável correta que alimenta a roleta (girosRoleta)
                         const girosAtuais = userData.girosRoleta || 0;
-                        
                         const badgeRoleta = document.getElementById('roleta-badge');
                         if (girosAtuais > 0) {
                             badgeRoleta.innerText = `${girosAtuais} ${girosAtuais === 1 ? 'Giro Grátis' : 'Giros Grátis'}`;
@@ -526,15 +587,21 @@
 
                         atualizarElementosSaldo();
 
-                        document.getElementById('toggle-balance').onclick = () => {
+                        document.getElementById('toggle-balance').onclick = async () => {
                             saldoVisivel = !saldoVisivel;
                             localStorage.setItem('saldoVisivel', saldoVisivel);
                             atualizarElementosSaldo();
                             carregarInvestimentos(user.uid, userData);
+                            
+                            // Gatilho interno para concluir a meta fácil de ocultar saldo automaticamente
+                            if (!userData.metaFacil2Coletada && !localStorage.getItem('metaFacil2AutoCompleta')) {
+                                localStorage.setItem('metaFacil2AutoCompleta', 'true');
+                            }
                         };
 
                         carregarInvestimentos(user.uid, userData);
                         carregarAviso();
+                        carregarRankingGlobal();
                         
                         if (!window.processamentoInicialRealizado) {
                             window.processamentoInicialRealizado = true;
@@ -621,12 +688,16 @@
         function atualizarMissoes(userData, totalInvestido) {
             const hoje = getHojeString();
             const isFezHoje = (userData.ultimoCheckin === hoje);
-            const container = document.getElementById('container-missoes');
-            if(!container) return;
+            
+            // Containers de renderização
+            const containerMetasFaceis = document.getElementById('container-metas-faceis');
+            const containerMissoes = document.getElementById('container-missoes');
+            
+            if(!containerMissoes || !containerMetasFaceis) return;
 
             const totalIndicados = userData.indicadosAtivosNivel1 || 0; 
 
-            // Estado das coletas mapeadas do banco de dados
+            // Estado das coletas (Banco de dados)
             const m1Coletada = userData.missao1Coletada === true;
             const m2Coletada = userData.missao2Coletada === true;
             const m3Coletada = userData.missao3Coletada === true;
@@ -634,9 +705,71 @@
             const m5Coletada = userData.missao5Coletada === true;
             const m6Coletada = userData.missao6Coletada === true;
 
+            // Novas metas fáceis
+            const mf1Coletada = userData.metaFacil1Coletada === true;
+            const mf2Coletada = userData.metaFacil2Coletada === true;
+            const mf3Coletada = userData.metaFacil3Coletada === true;
+
+            // 1. RENDERIZAR METAS FÁCEIS (ESTRUTURA INDEPENDENTE FIXA)
+            let htmlMf = '';
+
+            // Meta Fácil 1: Conhecer Comunidade
+            htmlMf += `
+            <div class="quest-item">
+                <div class="quest-info">
+                    <h4>💬 Primeiro Contato</h4>
+                    <p>Clique no botão flutuante e visite nosso canal</p>
+                    <div class="quest-reward"><i class="fas fa-wallet"></i> +R$ 0,50 Saldo</div>
+                </div>
+                <div>`;
+            if (mf1Coletada) {
+                htmlMf += `<span class="btn-quest-done"><i class="fas fa-check"></i> Pronto</span>`;
+            } else {
+                htmlMf += `<button class="btn-quest-claim" id="btn-mf1">Resgatar</button>`;
+            }
+            htmlMf += `</div></div>`;
+
+            // Meta Fácil 2: Segurança Visual
+            const autoMF2Pronto = localStorage.getItem('metaFacil2AutoCompleta') === 'true';
+            htmlMf += `
+            <div class="quest-item">
+                <div class="quest-info">
+                    <h4>👁️ Olhar Clínico</h4>
+                    <p>Ative ou desative o "olho" de ocultar saldo</p>
+                    <div class="quest-reward"><i class="fas fa-wallet"></i> +R$ 0,25 Saldo</div>
+                </div>
+                <div>`;
+            if (mf2Coletada) {
+                htmlMf += `<span class="btn-quest-done"><i class="fas fa-check"></i> Pronto</span>`;
+            } else if (autoMF2Pronto) {
+                htmlMf += `<button class="btn-quest-claim" id="btn-mf2">Resgatar</button>`;
+            } else {
+                htmlMf += `<button class="btn-quest-claim" disabled>0/1</button>`;
+            }
+            htmlMf += `</div></div>`;
+
+            // Meta Fácil 3: Auditoria Interna
+            htmlMf += `
+            <div class="quest-item">
+                <div class="quest-info">
+                    <h4>🛡️ Verificação de Conta</h4>
+                    <p>Faça uma checagem rápida no sistema</p>
+                    <div class="quest-reward"><i class="fas fa-dharmachakra"></i> +1 Giro Grátis</div>
+                </div>
+                <div>`;
+            if (mf3Coletada) {
+                htmlMf += `<span class="btn-quest-done"><i class="fas fa-check"></i> Pronto</span>`;
+            } else {
+                htmlMf += `<button class="btn-quest-claim" id="btn-mf3">Verificar</button>`;
+            }
+            htmlMf += `</div></div>`;
+
+            containerMetasFaceis.innerHTML = htmlMf;
+
+
+            // 2. RENDERIZAR MISSÕES DE EVOLUÇÃO
             let html = '';
 
-            // --- MISSÃO 1: INVESTIDOR ATIVO ---
             html += `
             <div class="quest-item">
                 <div class="quest-info">
@@ -654,7 +787,6 @@
             }
             html += `</div></div>`;
 
-            // --- LÓGICA DE FILA ENCADEADA (DA 2 ATÉ A 6) ---
             if (!m2Coletada) {
                 html += `
                 <div class="quest-item animate__animated animate__fadeIn">
@@ -729,7 +861,7 @@
                     </div>
                     <div>`;
                 if (m6Coletada) {
-                    html += `<span class="btn-quest-done"><i class="fas fa-check"></i> Todas Concluídas!</span>`;
+                    html += `<span class="btn-quest-done"><i class="fas fa-check"></i> Concluídas!</span>`;
                 } else if (totalIndicados >= 10) { 
                     html += `<button class="btn-quest-claim" id="btn-m6">Resgatar</button>`;
                 } else {
@@ -738,8 +870,9 @@
                 html += `</div></div>`;
             }
 
-            container.innerHTML = html;
+            containerMissoes.innerHTML = html;
 
+            // SISTEMA DINÂMICO DE ASSOCIAÇÃO DE CLIQUE
             const associarCliqueMissao = (idBotao, campoDb, valorIncremento, tipoMoeda, nomeHistorico, textoSucesso) => {
                 const btn = document.getElementById(idBotao);
                 if (!btn) return;
@@ -751,7 +884,6 @@
                         let camposUpdate = {};
                         camposUpdate[campoDb] = true;
 
-                        // CORREÇÃO: Agora injeta corretamente na variável 'girosRoleta'
                         if (tipoMoeda === 'giros') {
                             camposUpdate['girosRoleta'] = increment(valorIncremento);
                         } else {
@@ -763,12 +895,12 @@
                         await addDoc(collection(db, "historico"), { 
                             userId: uid, 
                             valor: tipoMoeda === 'saldo' ? valorIncremento : 0, 
-                            tipo: `Missão: ${nomeHistorico}`, 
+                            tipo: `Meta: ${nomeHistorico}`, 
                             data: Timestamp.now() 
                         });
 
                         Swal.fire({ 
-                            title: 'Missão Concluída!', 
+                            title: 'Recompensa Concluída!', 
                             text: textoSucesso, 
                             icon: 'success', 
                             background: '#060b19', 
@@ -783,6 +915,32 @@
                 };
             };
 
+            // Injeção de cliques das metas fáceis
+            const linkTG = document.getElementById('link-telegram-global');
+            const btnMF1 = document.getElementById('btn-mf1');
+            if(btnMF1 && linkTG) {
+                btnMF1.onclick = () => {
+                    linkTG.click(); // Força o clique no link telegram
+                    associarCliqueMissao('btn-mf1', 'metaFacil1Coletada', 0.50, 'saldo', 'Primeiro Contato', 'R$ 0,50 injetados no seu saldo de lucro!');
+                    setTimeout(() => { document.getElementById('btn-mf1').click(); }, 100);
+                };
+            }
+            
+            associarCliqueMissao('btn-mf2', 'metaFacil2Coletada', 0.25, 'saldo', 'Olhar Clínico', 'R$ 0,25 adicionados com sucesso.');
+            
+            const btnMF3 = document.getElementById('btn-mf3');
+            if (btnMF3) {
+                btnMF3.onclick = () => {
+                    btnMF3.disabled = true;
+                    btnMF3.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    setTimeout(() => {
+                        associarCliqueMissao('btn-mf3', 'metaFacil3Coletada', 1, 'giros', 'Auditoria Realizada', 'Sua conta está 100% segura. +1 Giro adicionado!');
+                        document.getElementById('btn-mf3').click();
+                    }, 1200);
+                };
+            }
+
+            // Injeção de cliques das missões padrão
             associarCliqueMissao('btn-m1', 'missao1Coletada', 1, 'giros', 'Investidor Ativo', 'Você resgatou +1 Giro Grátis na Roleta!');
             associarCliqueMissao('btn-m2', 'missao2Coletada', 1.00, 'saldo', 'Foco Diário', 'R$ 1,00 creditado! Próxima missão desbloqueada.');
             associarCliqueMissao('btn-m3', 'missao3Coletada', 2.00, 'saldo', 'Líder Iniciante', 'R$ 2,00 creditados! Você desbloqueou o próximo nível.');
